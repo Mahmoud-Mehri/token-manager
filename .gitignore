@@ -1,0 +1,5 @@
+back/node_modules
+back/tokens/artifacts
+back/tokens/cache
+
+front/node_modules
