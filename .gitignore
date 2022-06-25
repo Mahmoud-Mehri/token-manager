@@ -1,5 +1,9 @@
+# Back
 back/node_modules
 back/tokens/artifacts
 back/tokens/cache
 
+# Front
 front/node_modules
+front/build
+front/coverage
