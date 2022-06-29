@@ -1,20 +1,28 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+pragma solidity 0.8.15;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
+import "../../node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "../../node_modules/@openzeppelin/contracts/utils/Counters.sol";
 
-contract CompanyNFT is ERC721 {
-    // Implementing Auto-Increment for TokenId
+contract ERC721Token is ERC721 {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
 
     address private _owner;
 
-    // We can also inherit from @OpenZeppelin/contracts/access/Ownable.sol
-    // which supports transfering ownership
+    string _baseUrl;
 
-    constructor() ERC721("Company NFT", "CNFT") {
+    struct MetaData {
+        string name;
+        string description;
+        string imageUrl;
+    }
+
+    mapping(uint256 => MetaData) private metaDatas;
+
+    constructor(string memory name_, string memory symbol_)
+        ERC721(name_, symbol_)
+    {
         _owner = _msgSender();
     }
 
@@ -43,14 +51,5 @@ contract CompanyNFT is ERC721 {
 
     function burn(uint256 tokenId) public onlyTokenOwnerOrApproved(tokenId) {
         _burn(tokenId);
-    }
-
-    // This function needs to be overrided because its implemented in two drived classes
-    function _afterTokenTransfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal override {
-        super._afterTokenTransfer(from, to, tokenId);
     }
 }
