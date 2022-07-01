@@ -2,52 +2,57 @@ import mongoose, { FilterQuery } from "mongoose";
 import { newResponse } from "../../model/general.js";
 import { IToken, Token } from "../../model/token.js";
 import { User } from "../../model/user.js";
+import { ERC20Controller } from "../../tokens/controller/erc20-controller.js";
+import { ERC721Controller } from "../../tokens/controller/erc721-controller.js";
 
 export class TokenController {
 
+    private _erc20Controller: ERC20Controller;
+    private _erc721Controller: ERC721Controller;
+
     constructor() { }
 
-    async findTokenById(_tokenId: string, _includeUsers: boolean = false) {
+    async findTokenById(_tokenId: string, _includeUser: boolean = false) {
         return new Promise(async (resolve, reject) => {
             try {
                 let token: mongoose.Model<IToken>[];
-                if (_includeUsers)
-                    token = await Token.findById(_tokenId).populate('users');
+                if (_includeUser)
+                    token = await Token.findById(_tokenId).populate('user');
                 else
                     token = await Token.findById(_tokenId);
-                resolve(token);
+                resolve(newResponse(true, token));
             } catch (err) {
-                reject(err);
+                reject(newResponse(false, err.message));
             }
         })
     }
 
-    async findToken(filter: FilterQuery<IToken>, _includeUsers: boolean = false) {
+    async findToken(filter: FilterQuery<IToken>, _includeUser: boolean = false) {
         return new Promise(async (resolve, reject) => {
             try {
                 let tokens: mongoose.Model<IToken>[];
-                if (_includeUsers)
-                    tokens = await Token.find(filter).populate('users');
+                if (_includeUser)
+                    tokens = await Token.find(filter).populate('user');
                 else
                     tokens = await Token.find(filter);
-                resolve(tokens);
+                resolve(newResponse(true, tokens));
             } catch (err) {
-                reject(err);
+                reject(newResponse(false, err.message));
             }
         })
     }
 
-    async allTokens(_includeUsers: boolean = false) {
+    async allTokens(_includeUser: boolean = false) {
         return new Promise(async (resolve, reject) => {
             try {
                 let tokens;
-                if (_includeUsers)
-                    tokens = await Token.find({}).populate('users');
+                if (_includeUser)
+                    tokens = await Token.find({}).populate('user');
                 else
                     tokens = await Token.find({});
-                resolve(tokens);
+                resolve(newResponse(true, tokens));
             } catch (err) {
-                reject(err);
+                reject(newResponse(false, err.message));
             }
         })
     }
@@ -57,9 +62,9 @@ export class TokenController {
             try {
                 const token = new Token(_token);
                 await token.save();
-                resolve(token);
+                resolve(newResponse(true, token));
             } catch (err) {
-                reject(err)
+                reject(newResponse(false, err.message))
             }
         })
     }
@@ -73,9 +78,9 @@ export class TokenController {
 
                 token.set(_token);
                 await token.save();
-                resolve(token);
+                resolve(newResponse(true, token));
             } catch (err) {
-                reject(err);
+                reject(newResponse(false, err.message));
             }
         })
     }
@@ -88,7 +93,7 @@ export class TokenController {
                 else
                     reject(newResponse(false, "Token not exists!"))
             } catch (err) {
-                reject(err);
+                reject(newResponse(false, err.message));
             }
         })
     }
@@ -132,9 +137,9 @@ export class TokenController {
                     { new: true }
                 );
 
-                resolve('User added successfully')
+                resolve(newResponse(false, "Account added successfully"))
             } catch (err) {
-                reject(err);
+                reject(newResponse(false, err.message));
             }
 
         })

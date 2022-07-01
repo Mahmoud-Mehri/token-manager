@@ -47,9 +47,7 @@ export class UserController {
     async newUser(_user) {
         return new Promise(async (resolve, reject) => {
             try {
-                console.log(_user);
                 const user = new User(_user);
-                console.log(user);
                 await user.save();
                 resolve(user);
             } catch (err) {
