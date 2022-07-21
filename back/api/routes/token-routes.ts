@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { TokenController } from '../controller/token-controller.js';
-import { newResponse } from '../../model/general.js';
+import { TokenController } from '../controller/token-controller';
+import { newResponse } from '../../model/general';
 
 export const tokenRouter = Router();
 const tokenController = new TokenController();
@@ -69,7 +69,7 @@ tokenRouter.get('/:id/accounts', (req, res) => {
 tokenRouter.post('/:id/accounts', (req, res) => {
     const tokenId = req.params.id;
     const userId = req.body.userId;
-    tokenController.addUserToToken(tokenId, userId)
+    tokenController.addAccountToToken(tokenId, userId)
         .then(message => res.json(newResponse(true, message)))
         .catch(err => res.json(newResponse(false, err.message)));
 })
