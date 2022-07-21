@@ -4,7 +4,7 @@ pragma solidity 0.8.15;
 import "../../node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "../../node_modules/@openzeppelin/contracts/utils/Counters.sol";
 
-contract ERC721Token is ERC721 {
+contract NFToken is ERC721 {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
 
