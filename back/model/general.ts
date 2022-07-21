@@ -1,3 +1,7 @@
+export enum LogRecordType {
+    INFO = 'INFO',
+    ERROR = 'ERROR'
+}
 
 export function newResponse(_success: boolean, _data: any) {
     if (_success)

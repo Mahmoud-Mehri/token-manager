@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
 export interface IUser {
     firstName: string;
@@ -7,8 +8,6 @@ export interface IUser {
     password: string;
     phone: string;
     accountAddr: string;
-
-    deleteById(userId: string): boolean;
 }
 
 const emailRegExPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -59,15 +58,31 @@ const UserSchema = new mongoose.Schema<IUser>(
     },
     {
         versionKey: false,
-        // toJSON: {
-        //     virtuals: true,
-        //     getters: true,
-        //     transform: (doc, converted) => {
-        //         delete converted._id;
-        //     }
-        // }
+        toJSON: {
+            virtuals: true,
+            getters: true,
+            transform: (doc, converted) => {
+                delete converted._id;
+                delete converted.password;
+            }
+        }
     }
 )
+
+UserSchema.pre("save", async function hashPassword(next) {
+    if (!this.isModified('password')) return next();
+    try {
+        this.password = await bcrypt.hash(this.password, 10);
+        next();
+    } catch (err) {
+        next(err);
+    }
+
+})
+
+UserSchema.methods.checkPassword = (pass: string, hashedPass: string) => {
+    return bcrypt.compareSync(pass, hashedPass);
+}
 
 UserSchema.virtual('fullName')
     .get(function () {
