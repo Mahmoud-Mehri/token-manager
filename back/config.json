@@ -1,0 +1,16 @@
+{
+    "auth": {
+        "jwtSecret": "JWT_SECRET_KEY",
+        "hashSaltRound": 10,
+        "expireTimeout": 300,
+        "sessionSecret": "..."
+    },
+    "redis": {
+        "host": "0000",
+        "port": 123
+    },
+    "mongodb": {
+        "host": "....",
+        "port": "..."
+    }
+}

@@ -10,14 +10,14 @@ import "solidity-coverage";
 // Go to https://hardhat.org/config/ to learn more
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.4",
+  solidity: "0.8.15",
   defaultNetwork: "hardhat",
   networks: {
     hardhat: {
 
     },
     rinkeby: {
-      url: "https://eth-rinkeby.alchemyapi.io/v2/123abc123abc123abc123abc123abcde",
+      url: "https://rinkeby.infura.io/v3/d9153f9f351946c1841e246d19825eb6",
       accounts: []
     },
     ropsten: {
