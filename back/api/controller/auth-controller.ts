@@ -1,7 +1,5 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import redis from 'ioredis';
-import mongoose from 'mongoose';
 import { User } from '../../model/user';
 import { newResponse } from '../../model/general';
 import * as config from '../../config.json';

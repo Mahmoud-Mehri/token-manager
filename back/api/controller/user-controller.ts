@@ -1,6 +1,6 @@
 import { FilterQuery } from 'mongoose';
-import { newResponse } from '../../model/general.js';
-import { IUser, User } from '../../model/user.js';
+import { newResponse } from '../../model/general';
+import { IUser, User } from '../../model/user';
 
 export class UserController {
 

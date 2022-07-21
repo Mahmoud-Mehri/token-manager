@@ -1,9 +1,9 @@
 import mongoose, { FilterQuery } from "mongoose";
-import { newResponse } from "../../model/general.js";
-import { IToken, Token } from "../../model/token.js";
-import { User } from "../../model/user.js";
-import { ERC20Controller } from "../../tokens/controller/erc20-controller.js";
-import { ERC721Controller } from "../../tokens/controller/erc721-controller.js";
+import { newResponse } from "../../model/general";
+import { IToken, Token } from "../../model/token";
+import { User } from "../../model/user";
+import { ERC20Controller } from "../../tokens/controller/erc20-controller";
+import { ERC721Controller } from "../../tokens/controller/erc721-controller";
 
 export class TokenController {
 
