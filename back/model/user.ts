@@ -6,6 +6,8 @@ import {
   CreationOptional,
   DataTypes,
 } from "sequelize";
+import { Token } from "./token";
+import { Account } from "./account";
 import { dbconnection } from "../db-connection";
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
@@ -68,6 +70,16 @@ User.init(
   }
 );
 
-// User.sync({ force: true });
+User.hasMany(Account, {
+  sourceKey: "id",
+  foreignKey: "userId",
+  as: "accounts",
+});
+
+User.hasMany(Token, {
+  sourceKey: "id",
+  foreignKey: "userId",
+  as: "tokens",
+});
 
 export { User };

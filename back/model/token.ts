@@ -4,8 +4,11 @@ import {
   InferCreationAttributes,
   CreationOptional,
   DataTypes,
+  ForeignKey,
 } from "sequelize";
+import { User } from "./user";
 import { dbconnection } from "../db-connection";
+import { Account } from "./account";
 
 class Token extends Model<
   InferAttributes<Token>,
@@ -21,13 +24,14 @@ class Token extends Model<
   declare activeDate: Date;
   declare creatorAddress: string;
   declare ownerAddress: string;
+  declare userId: ForeignKey<User["id"]>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 }
 Token.init(
   {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       autoIncrement: true,
       primaryKey: true,
     },
@@ -37,7 +41,7 @@ Token.init(
       allowNull: false,
     },
     title: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     status: {
@@ -46,7 +50,7 @@ Token.init(
       allowNull: false,
     },
     address: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(42),
       allowNull: false,
     },
     createDate: {
@@ -60,10 +64,10 @@ Token.init(
       type: DataTypes.DATE,
     },
     creatorAddress: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(42),
     },
     ownerAddress: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(42),
     },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
@@ -73,5 +77,7 @@ Token.init(
     modelName: "token",
   }
 );
+
+Account.belongsTo(User, { targetKey: "id" });
 
 export { Token };
