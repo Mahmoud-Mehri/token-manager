@@ -1,97 +1,73 @@
-import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
+import {
+  Model,
+  InferAttributes,
+  InferCreationAttributes,
+  CreationOptional,
+  DataTypes,
+} from "sequelize";
+import { dbconnection } from "../db-connection";
 
-export interface IUser {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    phone: string;
-    accountAddr: string;
+class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+  declare id: CreationOptional<number>;
+  declare firstName: string;
+  declare lastName: string;
+  declare email: string;
+  declare password: string;
+  declare createdAt: CreationOptional<Date>;
+  declare updatedAt: CreationOptional<Date>;
+
+  async validatePassword(pass: string) {
+    return await bcrypt.compare(pass, this.password);
+  }
 }
-
-const emailRegExPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-
-const validateEmailValue = (value: string) => {
-    const emailRegex = new RegExp(emailRegExPattern);
-    return value.match(emailRegex);
-}
-
-const checkDuplicateEmail = function async(value: string) {
-    return new Promise(async function (resolve, reject) {
-        User.findOne({ email: value })
-            .then(function (user) {
-                if (!user)
-                    resolve(true)
-                else if (user._id.toString() == this._id.toString())
-                    resolve(true)
-                else
-                    resolve(false);
-            })
-            .catch((err) => reject(err));
-    })
-}
-
-const UserSchema = new mongoose.Schema<IUser>(
-    {
-        firstName: { type: String, trim: true, required: true },
-        lastName: { type: String, trim: true, required: true },
-        email: {
-            type: String,
-            trim: true,
-            unique: true,
-            required: true,
-            validate: [
-                {
-                    validator: validateEmailValue,
-                    message: (props) => `${props.value} is not a valid Email address`
-                },
-                {
-                    validator: checkDuplicateEmail,
-                    message: (props) => `${props.value} is already used by another user`
-                }
-            ]
-        },
-        password: { type: String, required: true },
-        phone: { type: String, trim: true },
-        accountAddr: { type: String, required: true }
+User.init(
+  {
+    id: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      autoIncrement: true,
+      primaryKey: true,
     },
-    {
-        versionKey: false,
-        toJSON: {
-            virtuals: true,
-            getters: true,
-            transform: (doc, converted) => {
-                delete converted._id;
-                delete converted.password;
-            }
-        }
-    }
-)
+    firstName: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+    },
+    lastName: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING(200),
+      unique: {
+        name: "email",
+        msg: "Email Address is already used",
+      },
+      allowNull: false,
+      validate: {
+        isEmail: {
+          msg: "Email Address is not valid",
+        },
+      },
+    },
+    password: {
+      type: DataTypes.STRING(16),
+      allowNull: false,
+    },
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE,
+  },
+  {
+    sequelize: dbconnection,
+    modelName: "user",
+    hooks: {
+      beforeCreate: async function (user, options) {
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(user.password, salt);
+      },
+    },
+  }
+);
 
-UserSchema.pre("save", async function hashPassword(next) {
-    if (!this.isModified('password')) return next();
-    try {
-        this.password = await bcrypt.hash(this.password, 10);
-        next();
-    } catch (err) {
-        next(err);
-    }
+// User.sync({ force: true });
 
-})
-
-UserSchema.methods.checkPassword = (pass: string, hashedPass: string) => {
-    return bcrypt.compareSync(pass, hashedPass);
-}
-
-UserSchema.virtual('fullName')
-    .get(function () {
-        return this.firstName + ' ' + this.lastName;
-    });
-
-const User = mongoose.model<IUser>('User', UserSchema);
-
-export { User }
-
-
-
+export { User };

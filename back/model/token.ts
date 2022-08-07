@@ -1,60 +1,77 @@
-import mongoose from 'mongoose';
+import {
+  Model,
+  InferAttributes,
+  InferCreationAttributes,
+  CreationOptional,
+  DataTypes,
+} from "sequelize";
+import { dbconnection } from "../db-connection";
 
-export interface IToken {
-    tokenType: string;
-    title: string;
-    status: string;
-    address: string;
-    createdDate: Date;
-    deployDate: Date;
-    activeDate: Date;
-    creatorAddress: string;
-    ownerAddress: string;
-    accounts: [string];
-    user: mongoose.Types.ObjectId;
+class Token extends Model<
+  InferAttributes<Token>,
+  InferCreationAttributes<Token>
+> {
+  declare id: CreationOptional<number>;
+  declare tokenType: string;
+  declare title: string;
+  declare status: string;
+  declare address: string;
+  declare createDate: Date;
+  declare deployDate: Date;
+  declare activeDate: Date;
+  declare creatorAddress: string;
+  declare ownerAddress: string;
+  declare createdAt: CreationOptional<Date>;
+  declare updatedAt: CreationOptional<Date>;
 }
-
-const TokenSchema = new mongoose.Schema<IToken>(
-    {
-        tokenType: {
-            type: String,
-            enum: ['erc21', 'erc721'],
-            set: (val: string) => val.toLowerCase(),
-            // get: (val: string) => val.toUpperCase(),
-            default: 'pending',
-            required: true
-        },
-        title: { type: String, required: true },
-        status: {
-            type: String,
-            enum: ['pending', 'deployed', 'active', 'inactive'],
-            set: (val: string) => val.toLowerCase(),
-            // get: (val: string) => val.toUpperCase(),
-            default: 'pending',
-            required: true
-        },
-        address: { type: String },
-        createdDate: { type: Date, default: new Date(), required: true },
-        deployDate: { type: Date },
-        activeDate: { type: Date },
-        creatorAddress: { type: String, required: true },
-        ownerAddress: { type: String, required: true },
-        accounts: { type: [String] },
-        user: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
-            required: true
-        }
+Token.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
     },
-    {
-        versionKey: false,
-        // toJSON: {
-        //     virtuals: true,
-        //     getters: true
-        // }
-    }
-)
+    tokenType: {
+      type: DataTypes.ENUM("FT", "NFT"),
+      defaultValue: "FT",
+      allowNull: false,
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    status: {
+      type: DataTypes.ENUM("CREATED", "PAUSED", "ACTIVE"),
+      defaultValue: "CREATED",
+      allowNull: false,
+    },
+    address: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    createDate: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    deployDate: {
+      type: DataTypes.DATE,
+    },
+    activeDate: {
+      type: DataTypes.DATE,
+    },
+    creatorAddress: {
+      type: DataTypes.STRING,
+    },
+    ownerAddress: {
+      type: DataTypes.STRING,
+    },
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE,
+  },
+  {
+    sequelize: dbconnection,
+    modelName: "token",
+  }
+);
 
-const Token = mongoose.model<IToken>('Token', TokenSchema);
-
-export { Token }
+export { Token };
