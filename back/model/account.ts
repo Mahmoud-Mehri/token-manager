@@ -44,6 +44,6 @@ Account.init(
   }
 );
 
-Account.belongsTo(User, { targetKey: "id" });
+// Account.belongsTo(User, { targetKey: "id" });
 
 export { Account };

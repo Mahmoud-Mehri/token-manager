@@ -78,6 +78,6 @@ Token.init(
   }
 );
 
-Account.belongsTo(User, { targetKey: "id" });
+// Token.belongsTo(User, { targetKey: "id" });
 
 export { Token };

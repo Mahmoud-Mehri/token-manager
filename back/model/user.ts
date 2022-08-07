@@ -23,6 +23,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     return await bcrypt.compare(pass, this.password);
   }
 }
+
 User.init(
   {
     id: {
