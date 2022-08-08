@@ -38,7 +38,7 @@ export class TokenController {
     }
   }
 
-  async newToken(_tokenInfo: any) {
+  async newToken(_userId: number, _tokenInfo: any) {
     try {
       const token = new Token(_tokenInfo);
       await token.save();
@@ -61,9 +61,9 @@ export class TokenController {
     }
   }
 
-  async deleteToken(_tokenId: string) {
+  async deleteToken(_tokenId: number) {
     try {
-      if (await Token.destroy({ where: { _id: _tokenId } }))
+      if (await Token.destroy({ where: { id: _tokenId } }))
         return newResponse(true, "Token deleted successfully");
       else return newResponse(false, "Token not exists!");
     } catch (err) {
@@ -71,42 +71,30 @@ export class TokenController {
     }
   }
 
-  async getTokenUser(_tokenId: string) {
-    try {
-      const token = await Token.findByPk(_tokenId);
-      if (!token) throw new Error("Token Not Found");
-      const user = await User.findAll({ where: { _id: token.user } });
-      return newResponse(true, user);
-    } catch (err) {
-      return newResponse(false, err.message);
-    }
-  }
+  // async getTokenAccounts(_tokenId: string) {
+  //   try {
+  //     const token = await Token.findByPk(_tokenId);
+  //     if (!token) throw new Error("Token Not Found");
 
-  async getTokenAccounts(_tokenId: string) {
-    try {
-      const token = await Token.findByPk(_tokenId);
-      if (!token) throw new Error("Token Not Found");
+  //     const accounts = Array.from(token.accounts);
+  //     return newResponse(true, accounts);
+  //   } catch (err) {
+  //     return newResponse(false, err.message);
+  //   }
+  // }
 
-      const accounts = Array.from(token.accounts);
-      return newResponse(true, accounts);
-    } catch (err) {
-      return newResponse(false, err.message);
-    }
-  }
+  // async addAccountToToken(_tokenId: string, _account: string) {
+  //   try {
+  //     const token = await Token.update(
+  //       _tokenId,
 
-  async addAccountToToken(_tokenId: string, _account: string) {
-    try {
-      const token = await Token.update(
-        _tokenId,
-        { $push: { accounts: _account } },
-        { new: true }
-      );
+  //     );
 
-      return newResponse(false, "Account added successfully");
-    } catch (err) {
-      return newResponse(false, err.message);
-    }
-  }
+  //     return newResponse(false, "Account added successfully");
+  //   } catch (err) {
+  //     return newResponse(false, err.message);
+  //   }
+  // }
 
   async mintToken(_tokenId: string, _accountAddr: string) {
     // ...

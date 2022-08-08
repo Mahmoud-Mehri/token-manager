@@ -4,7 +4,11 @@ import { User } from "../model/user";
 export class UserController {
   constructor() {}
 
-  async findUserById(_userId: number) {
+  async findUserById(
+    _userId: number,
+    includeAccounts: boolean = false,
+    includeTokens: boolean = false
+  ) {
     try {
       const user = await User.findByPk(_userId);
       if (user) return newResponse(true, user);
@@ -14,7 +18,11 @@ export class UserController {
     }
   }
 
-  async findUserByEmail(_email: string) {
+  async findUserByEmail(
+    _email: string,
+    includeAccounts: boolean = false,
+    includeTokens: boolean = false
+  ) {
     try {
       const user = await User.findOne({
         where: {
@@ -28,13 +36,21 @@ export class UserController {
     }
   }
 
-  async allUsers() {
+  async allUsers(
+    includeAccounts: boolean = false,
+    includeTokens: boolean = false
+  ) {
     try {
       const users = await User.findAll({});
       return newResponse(true, users);
     } catch (err) {
       return newResponse(false, err.message);
     }
+  }
+
+  async getUserAccounts(_userId: number) {
+    try {
+    } catch (err) {}
   }
 
   async newUser(_userInfo: any) {
@@ -66,5 +82,14 @@ export class UserController {
     } catch (err) {
       return newResponse(false, err.message);
     }
+  }
+
+  async addNewAccount(
+    _userId: number,
+    accountAddr: string,
+    accountPrivateKey: string = ""
+  ) {
+    try {
+    } catch (err) {}
   }
 }
