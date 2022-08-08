@@ -1,8 +1,8 @@
 import express, { urlencoded } from "express";
 import cookieparser from "cookie-parser";
 
-import { userRouter } from "../api/routes/user-routes";
-import { authenticator } from "../api/middleware/authenticator";
+import { userRouter } from "../routes/user-routes";
+import { authenticator } from "../middleware/authenticator";
 
 const userServiceApp = express();
 
