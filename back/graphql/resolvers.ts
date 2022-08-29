@@ -4,7 +4,7 @@ import { TokenController } from "../controller/token-controller";
 const userController = new UserController();
 const tokenController = new TokenController();
 
-export const userResolver = {
+export const userResolvers = {
   getUserById: async ({ id }) => {
     const result = await userController.findUserById(id);
     if (!!result.success) {
@@ -19,8 +19,8 @@ export const userResolver = {
     }
     return null;
   },
-  getUserAccounts: async ({ id }) => {
-    const result = await userController.getUserAccounts(id);
+  getUserAccounts: async ({ userId }) => {
+    const result = await userController.getUserAccounts(userId);
     if (!!result.success) {
       return result.data;
     }
@@ -28,7 +28,7 @@ export const userResolver = {
   },
 };
 
-export const tokenResolver = {
+export const tokenResolvers = {
   getToken: async ({ id }) => {
     const result = await tokenController.findTokenById(id);
     if (!!result.success) {
@@ -36,7 +36,7 @@ export const tokenResolver = {
     }
     return null;
   },
-  getUserTokens: async ({ id }) => {
+  getUserTokens: async ({ userId }) => {
     // const result = await tokenController.
   },
 };
