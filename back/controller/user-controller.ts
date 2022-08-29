@@ -49,8 +49,21 @@ export class UserController {
   }
 
   async getUserAccounts(_userId: number) {
+    // TO DO
     try {
-    } catch (err) {}
+      throw { message: "Under Development !" };
+    } catch (err) {
+      return newResponse(false, err.message);
+    }
+  }
+
+  async getUserTokens(_userId: number) {
+    // TO DO
+    try {
+      throw { message: "Under Development !" };
+    } catch (err) {
+      return newResponse(false, err.message);
+    }
   }
 
   async newUser(_userInfo: any) {
