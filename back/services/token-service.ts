@@ -13,4 +13,4 @@ tokenServiceApp.use(json({ limit: "200k" }));
 tokenServiceApp.use(authenticator);
 tokenServiceApp.use(tokenRouter);
 
-export { tokenServiceApp };
+export default tokenServiceApp;

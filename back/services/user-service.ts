@@ -13,4 +13,4 @@ userServiceApp.use(json({ limit: "200k" }));
 userServiceApp.use(authenticator);
 userServiceApp.use(userRouter);
 
-export { userServiceApp };
+export default userServiceApp;
