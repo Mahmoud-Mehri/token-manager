@@ -38,9 +38,9 @@ type Token {
 type Query {
     getUserById(id: ID): User
     getUserByEmail(email: String)
-    getUserAccounts(id: ID): [Account]
+    getUserAccounts(userId: ID): [Account]
     getToken(id: ID): Token
-    getUserTokens(id: ID): [Tokens]
+    getUserTokens(userId: ID): [Tokens]
 }
 
 type Mutation {
