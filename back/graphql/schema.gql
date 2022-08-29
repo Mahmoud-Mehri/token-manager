@@ -1,0 +1,47 @@
+type User {
+  id: ID
+  firstName: String
+  lastName: String
+  email: String
+  password: String
+  createdAt: Date
+  updatedAt: Date
+  accounts: [Account]
+  tokens: [Token]
+}
+
+type Account {
+  id: ID
+  privateKey: String
+  address: String
+  createdAt: Date
+  updateAt: Date
+  user: User
+}
+
+type Token {
+  id: ID
+  title: String
+  tokenType: String
+  status: String
+  address: String
+  createDate: Date
+  deployDate: Date
+  activeDate: Date
+  creatorAddress: String
+  ownerAddress: String
+  createdAt: Date
+  updatedAt: Date
+  user: User
+}
+
+type Query {
+    getUser(id: ID): User
+    getToken(id: ID): Token
+    getUserAccounts(id: ID): [Account]
+    getUserTokens(id: ID): [Tokens]
+}
+
+type Mutation {
+
+}
