@@ -36,9 +36,10 @@ type Token {
 }
 
 type Query {
-    getUser(id: ID): User
-    getToken(id: ID): Token
+    getUserById(id: ID): User
+    getUserByEmail(email: String)
     getUserAccounts(id: ID): [Account]
+    getToken(id: ID): Token
     getUserTokens(id: ID): [Tokens]
 }
 
