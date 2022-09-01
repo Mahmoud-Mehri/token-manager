@@ -1,37 +1,21 @@
-import { CacheProvider } from '@emotion/react';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { CssBaseline } from '@mui/material';
-import { ThemeProvider } from '@mui/material/styles';
-import { createEmotionCache } from '../utils/create-emotion-cache';
-import { theme } from '../theme';
+import React, { useContext } from "react";
+import { Router, Switch } from "react-router-dom";
+import { TreesContext } from "./index.js";
+import { useFetch } from "./hooks/useFetch.js";
+import Tokens from "./pages/tokens.js";
+import Register from "./pages/register.js";
+import { Home } from "./pages/home.js";
 
-const clientSideEmotionCache = createEmotionCache();
-
-const App = (props) => {
-  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
-
-  const getLayout = Component.getLayout ?? ((page) => page);
-
+function App({ login }) {
+  // const { trees: data } = useContext(TreesContext);
+  // console.log(data);
   return (
-    <CacheProvider value={emotionCache}>
-      <header>
-        <title>
-          Material Kit Pro
-        </title>
-        <meta
-          name="viewport"
-          content="initial-scale=1, width=device-width"
-        />
-      </header>
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          {getLayout(<Component {...pageProps} />)}
-        </ThemeProvider>
-      </LocalizationProvider>
-    </CacheProvider>
+    // <Router>
+    <div className="app">
+      <Home />
+    </div>
+    // </Router>
   );
-};
+}
 
 export default App;

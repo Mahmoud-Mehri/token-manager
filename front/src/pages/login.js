@@ -1,191 +1,194 @@
-import Head from 'next/head';
-import NextLink from 'next/link';
-import { useRouter } from 'next/router';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { Box, Button, Container, Grid, Link, TextField, Typography } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Facebook as FacebookIcon } from '../icons/facebook';
-import { Google as GoogleIcon } from '../icons/google';
+import React from "react";
+import { connect } from "react-redux";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  Grid,
+  Link,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { Facebook as FacebookIcon } from "../icons/facebook";
+import { Google as GoogleIcon } from "../icons/google";
+import {
+  getLoginProgress,
+  getLoginError,
+  getLoginMessage,
+  getLoggedInUser,
+} from "../redux/selectors/user-selectors";
+import { userLoginRequest } from "../redux/thunks/user-thunk";
 
-const Login = () => {
-  const router = useRouter();
+const Login = (inProgress, user, error, message, onLoginClicked, ...props) => {
+  const fromDlg = !!props.dialog;
+  // const router = useRouter();
   const formik = useFormik({
     initialValues: {
-      email: 'demo@devias.io',
-      password: 'Password123'
+      email: "",
+      password: "",
     },
     validationSchema: Yup.object({
-      email: Yup
-        .string()
-        .email(
-          'Must be a valid email')
+      email: Yup.string()
+        .email("Email address is not valid")
         .max(255)
-        .required(
-          'Email is required'),
-      password: Yup
-        .string()
+        .required("Email is required"),
+      password: Yup.string()
         .max(255)
-        .required(
-          'Password is required')
+        .required("Password is required"),
     }),
     onSubmit: () => {
-      router.push('/');
-    }
+      const data = {
+        email: formik.values.email,
+        password: formik.values.password,
+      };
+
+      onLoginClicked(data);
+    },
   });
+
+  const Progress = <CircularProgress />;
+  const Message = (
+    <Typography color={error ? "red" : "colorSecondary"} variant="body2">
+      {error ? "Error:" : ""} {message}
+    </Typography>
+  );
 
   return (
     <>
-      <Head>
-        <title>Login | Material Kit</title>
-      </Head>
+      <title>Login | Material Kit</title>
       <Box
         component="main"
         sx={{
-          alignItems: 'center',
-          display: 'flex',
+          alignItems: "center",
+          display: "flex",
           flexGrow: 1,
-          minHeight: '100%'
+          minHeight: "100%",
         }}
       >
         <Container maxWidth="sm">
-          <NextLink
-            href="/"
-            passHref
-          >
-            <Button
-              component="a"
-              startIcon={<ArrowBackIcon fontSize="small" />}
-            >
-              Dashboard
-            </Button>
-          </NextLink>
           <form onSubmit={formik.handleSubmit}>
-            <Box sx={{ my: 3 }}>
-              <Typography
-                color="textPrimary"
-                variant="h4"
-              >
-                Sign in
-              </Typography>
-              <Typography
-                color="textSecondary"
-                gutterBottom
-                variant="body2"
-              >
-                Sign in on the internal platform
-              </Typography>
-            </Box>
-            <Grid
-              container
-              spacing={3}
-            >
-              <Grid
-                item
-                xs={12}
-                md={6}
-              >
-                <Button
-                  color="info"
-                  fullWidth
-                  startIcon={<FacebookIcon />}
-                  onClick={formik.handleSubmit}
-                  size="large"
-                  variant="contained"
+            {fromDlg ? null : (
+              <>
+                <Box sx={{ my: 3 }}>
+                  <Typography color="textPrimary" variant="h4">
+                    Sign in
+                  </Typography>
+                  <Typography
+                    color="textSecondary"
+                    gutterBottom
+                    variant="body2"
+                  >
+                    Sign in on the internal platform
+                  </Typography>
+                </Box>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={6}>
+                    <Button
+                      color="info"
+                      fullWidth
+                      startIcon={<FacebookIcon />}
+                      onClick={formik.handleSubmit}
+                      size="large"
+                      variant="contained"
+                    >
+                      Login with Facebook
+                    </Button>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Button
+                      fullWidth
+                      color="error"
+                      startIcon={<GoogleIcon />}
+                      onClick={formik.handleSubmit}
+                      size="large"
+                      variant="contained"
+                    >
+                      Login with Google
+                    </Button>
+                  </Grid>
+                </Grid>
+                <Box
+                  sx={{
+                    pb: 1,
+                    pt: 3,
+                  }}
                 >
-                  Login with Facebook
-                </Button>
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                md={6}
-              >
-                <Button
-                  fullWidth
-                  color="error"
-                  startIcon={<GoogleIcon />}
-                  onClick={formik.handleSubmit}
-                  size="large"
-                  variant="contained"
-                >
-                  Login with Google
-                </Button>
-              </Grid>
-            </Grid>
-            <Box
-              sx={{
-                pb: 1,
-                pt: 3
-              }}
-            >
-              <Typography
-                align="center"
-                color="textSecondary"
-                variant="body1"
-              >
-                or login with email address
-              </Typography>
-            </Box>
+                  <Typography
+                    align="center"
+                    color="textSecondary"
+                    variant="body1"
+                  >
+                    or login with email address
+                  </Typography>
+                </Box>
+              </>
+            )}
             <TextField
               error={Boolean(formik.touched.email && formik.errors.email)}
               fullWidth
               helperText={formik.touched.email && formik.errors.email}
               label="Email Address"
-              margin="normal"
+              margin="dense"
               name="email"
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               type="email"
               value={formik.values.email}
               variant="outlined"
+              size="small"
             />
             <TextField
               error={Boolean(formik.touched.password && formik.errors.password)}
               fullWidth
               helperText={formik.touched.password && formik.errors.password}
               label="Password"
-              margin="normal"
+              margin="dense"
               name="password"
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               type="password"
               value={formik.values.password}
               variant="outlined"
+              size="small"
             />
-            <Box sx={{ py: 2 }}>
+            <Box
+              sx={{
+                py: 2,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Box>{inProgress ? Progress : Message}</Box>
+
               <Button
                 color="primary"
-                disabled={formik.isSubmitting}
-                fullWidth
+                disabled={inProgress}
                 size="large"
                 type="submit"
                 variant="contained"
               >
-                Sign In Now
+                Register
               </Button>
             </Box>
-            <Typography
-              color="textSecondary"
-              variant="body2"
-            >
-              Don&apos;t have an account?
-              {' '}
-              <NextLink
-                href="/register"
-              >
+            {fromDlg ? null : (
+              <Typography color="textSecondary" variant="body2">
+                Don&apos;t have an account?{" "}
                 <Link
                   to="/register"
                   variant="subtitle2"
                   underline="hover"
                   sx={{
-                    cursor: 'pointer'
+                    cursor: "pointer",
                   }}
                 >
                   Sign Up
                 </Link>
-              </NextLink>
-            </Typography>
+              </Typography>
+            )}
           </form>
         </Container>
       </Box>
@@ -193,4 +196,15 @@ const Login = () => {
   );
 };
 
-export default Login;
+const mapStateToProps = (state) => ({
+  inProgress: getLoginProgress(state),
+  user: getLoggedInUser(state),
+  error: getLoginError(state),
+  message: getLoginMessage(state),
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onLoginClicked: (data) => dispatch(userLoginRequest(data)),
+});
+
+export default connect(mapStateToProps)(Login);

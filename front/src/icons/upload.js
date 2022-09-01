@@ -1,4 +1,5 @@
-import { createSvgIcon } from '@mui/material/utils';
+import React from "react";
+import { createSvgIcon } from "@mui/material/utils";
 
 export const Upload = createSvgIcon(
   <svg
@@ -12,5 +13,5 @@ export const Upload = createSvgIcon(
       clipRule="evenodd"
     />
   </svg>,
-  'Upload'
+  "Upload"
 );

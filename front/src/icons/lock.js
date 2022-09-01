@@ -1,4 +1,5 @@
-import { createSvgIcon } from '@mui/material/utils';
+import React from "react";
+import { createSvgIcon } from "@mui/material/utils";
 
 export const Lock = createSvgIcon(
   <svg
@@ -12,5 +13,5 @@ export const Lock = createSvgIcon(
       clipRule="evenodd"
     />
   </svg>,
-  'Lock'
+  "Lock"
 );

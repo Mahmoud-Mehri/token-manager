@@ -1,226 +1,211 @@
-import Head from 'next/head';
-import NextLink from 'next/link';
-import { useRouter } from 'next/router';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
+import React from "react";
+import { connect } from "react-redux";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import {
   Box,
   Button,
   Checkbox,
+  CircularProgress,
   Container,
   FormHelperText,
   Link,
   TextField,
-  Typography
-} from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+  Typography,
+} from "@mui/material";
+import {
+  getRegisteredUser,
+  getRegisterError,
+  getRegisterMessage,
+  getRegisterProgress,
+} from "../redux/selectors/user-selectors";
+import { userRegisterRequest } from "../redux/thunks/user-thunk";
 
-const Register = () => {
-  const router = useRouter();
+const Register = ({
+  inProgress,
+  user,
+  error,
+  message,
+  onRegisterClick,
+  ...props
+}) => {
+  const fromDlg = !!props.dialog;
+
+  // const router = useRouter();
   const formik = useFormik({
     initialValues: {
-      email: '',
-      firstName: '',
-      lastName: '',
-      password: '',
-      policy: false
+      email: "",
+      firstName: "",
+      lastName: "",
+      password: "",
     },
     validationSchema: Yup.object({
-      email: Yup
-        .string()
-        .email(
-          'Must be a valid email')
+      email: Yup.string()
+        .email("Must be a valid email")
         .max(255)
-        .required(
-          'Email is required'),
-      firstName: Yup
-        .string()
+        .required("Email is required"),
+      firstName: Yup.string()
         .max(255)
-        .required(
-          'First name is required'),
-      lastName: Yup
-        .string()
+        .required("First name is required"),
+      lastName: Yup.string()
         .max(255)
-        .required(
-          'Last name is required'),
-      password: Yup
-        .string()
+        .required("Last name is required"),
+      password: Yup.string()
         .max(255)
-        .required(
-          'Password is required'),
-      policy: Yup
-        .boolean()
-        .oneOf(
-          [true],
-          'This field must be checked'
-        )
+        .required("Password is required"),
     }),
     onSubmit: () => {
-      router.push('/');
-    }
+      const data = {
+        firstName: formik.values.firstName,
+        lastName: formik.values.lastName,
+        email: formik.values.email,
+        password: formik.values.password,
+      };
+
+      onRegisterClick(data);
+    },
   });
+
+  const Progress = <CircularProgress />;
+  const Message = (
+    <Typography color={error ? "red" : "colorSecondary"} variant="body2">
+      {error ? "Error:" : ""} {message}
+    </Typography>
+  );
 
   return (
     <>
-      <Head>
-        <title>
-          Register | Material Kit
-        </title>
-      </Head>
+      <title>Register</title>
       <Box
         component="main"
         sx={{
-          alignItems: 'center',
-          display: 'flex',
+          alignItems: "center",
+          display: "flex",
           flexGrow: 1,
-          minHeight: '100%'
+          minHeight: "100%",
         }}
       >
         <Container maxWidth="sm">
-          <NextLink
-            href="/"
-            passHref
-          >
-            <Button
-              component="a"
-              startIcon={<ArrowBackIcon fontSize="small" />}
-            >
-              Dashboard
-            </Button>
-          </NextLink>
           <form onSubmit={formik.handleSubmit}>
-            <Box sx={{ my: 3 }}>
-              <Typography
-                color="textPrimary"
-                variant="h4"
-              >
-                Create a new account
-              </Typography>
-              <Typography
-                color="textSecondary"
-                gutterBottom
-                variant="body2"
-              >
-                Use your email to create a new account
-              </Typography>
-            </Box>
+            {fromDlg ? null : (
+              <Box sx={{ my: 3 }}>
+                <Typography color="textPrimary" variant="h4">
+                  Create a new account
+                </Typography>
+                <Typography color="textSecondary" gutterBottom variant="body2">
+                  Use your email to create a new account
+                </Typography>
+              </Box>
+            )}
+
             <TextField
-              error={Boolean(formik.touched.firstName && formik.errors.firstName)}
+              error={Boolean(
+                formik.touched.firstName && formik.errors.firstName
+              )}
               fullWidth
               helperText={formik.touched.firstName && formik.errors.firstName}
               label="First Name"
-              margin="normal"
+              margin="dense"
               name="firstName"
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               value={formik.values.firstName}
               variant="outlined"
+              size="small"
             />
             <TextField
               error={Boolean(formik.touched.lastName && formik.errors.lastName)}
               fullWidth
               helperText={formik.touched.lastName && formik.errors.lastName}
               label="Last Name"
-              margin="normal"
+              margin="dense"
               name="lastName"
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               value={formik.values.lastName}
               variant="outlined"
+              size="small"
             />
             <TextField
               error={Boolean(formik.touched.email && formik.errors.email)}
               fullWidth
               helperText={formik.touched.email && formik.errors.email}
               label="Email Address"
-              margin="normal"
+              margin="dense"
               name="email"
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               type="email"
               value={formik.values.email}
               variant="outlined"
+              size="small"
             />
             <TextField
               error={Boolean(formik.touched.password && formik.errors.password)}
               fullWidth
               helperText={formik.touched.password && formik.errors.password}
               label="Password"
-              margin="normal"
+              margin="dense"
               name="password"
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               type="password"
               value={formik.values.password}
               variant="outlined"
+              size="small"
             />
-            <Box
-              sx={{
-                alignItems: 'center',
-                display: 'flex',
-                ml: -1
-              }}
-            >
-              <Checkbox
-                checked={formik.values.policy}
-                name="policy"
-                onChange={formik.handleChange}
-              />
-              <Typography
-                color="textSecondary"
-                variant="body2"
+            {fromDlg ? null : (
+              <Box
+                sx={{
+                  alignItems: "center",
+                  display: "flex",
+                  ml: -1,
+                }}
               >
-                I have read the
-                {' '}
-                <NextLink
-                  href="#"
-                  passHref
-                >
-                  <Link
-                    color="primary"
-                    underline="always"
-                    variant="subtitle2"
-                  >
+                <Checkbox
+                  checked={formik.values.policy}
+                  name="policy"
+                  onChange={formik.handleChange}
+                />
+                <Typography color="textSecondary" variant="body2">
+                  I have read the{" "}
+                  <Link color="primary" underline="always" variant="subtitle2">
                     Terms and Conditions
                   </Link>
-                </NextLink>
-              </Typography>
-            </Box>
-            {Boolean(formik.touched.policy && formik.errors.policy) && (
-              <FormHelperText error>
-                {formik.errors.policy}
-              </FormHelperText>
+                </Typography>
+              </Box>
             )}
-            <Box sx={{ py: 2 }}>
+            {Boolean(formik.touched.policy && formik.errors.policy) && (
+              <FormHelperText error>{formik.errors.policy}</FormHelperText>
+            )}
+            <Box
+              sx={{
+                py: 2,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Box>{inProgress ? Progress : Message}</Box>
+
               <Button
                 color="primary"
-                disabled={formik.isSubmitting}
-                fullWidth
+                disabled={inProgress}
                 size="large"
                 type="submit"
                 variant="contained"
               >
-                Sign Up Now
+                Register
               </Button>
             </Box>
-            <Typography
-              color="textSecondary"
-              variant="body2"
-            >
-              Have an account?
-              {' '}
-              <NextLink
-                href="/login"
-                passHref
-              >
-                <Link
-                  variant="subtitle2"
-                  underline="hover"
-                >
+            {fromDlg ? null : (
+              <Typography color="textSecondary" variant="body2">
+                Have an account?{" "}
+                <Link variant="subtitle2" underline="hover">
                   Sign In
                 </Link>
-              </NextLink>
-            </Typography>
+              </Typography>
+            )}
           </form>
         </Container>
       </Box>
@@ -228,4 +213,15 @@ const Register = () => {
   );
 };
 
-export default Register;
+const mapStateToProps = (state) => ({
+  inProgress: getRegisterProgress(state),
+  user: getRegisteredUser(state),
+  error: getRegisterError(state),
+  message: getRegisterMessage(state),
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onRegisterClick: (data) => dispatch(userRegisterRequest(data)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register);
