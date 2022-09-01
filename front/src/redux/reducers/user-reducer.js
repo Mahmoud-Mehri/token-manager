@@ -2,6 +2,9 @@ import {
   USER_REGISTER_PROGRESS,
   USER_REGISTER_SUCCESS,
   USER_REGISTER_FAILURE,
+  USER_LOGIN_PROGRESS,
+  USER_LOGIN_SUCCESS,
+  USER_LOGIN_FAILURE,
 } from "../actions/user-actions.js";
 
 const initialState = {

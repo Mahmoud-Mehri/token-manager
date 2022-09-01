@@ -16,7 +16,7 @@ export const userRegisterRequest = (data) => async (dispatch) => {
   try {
     dispatch(userRegisterProgress());
     const response = await axios.post(ROUTE_USER_REGISTER, data);
-    if (response.success) {
+    if (!!response.success) {
       dispatch(userRegisterSuccess(response.data));
     } else {
       if (response.message) {
@@ -28,7 +28,7 @@ export const userRegisterRequest = (data) => async (dispatch) => {
   } catch (err) {
     let message = "";
     if (err.response) {
-      message = response.message;
+      message = err.response.message;
     } else {
       message = err.message;
     }
@@ -52,7 +52,7 @@ export const userLoginRequest = (data) => async (dispatch) => {
   } catch (err) {
     let message = "";
     if (err.response) {
-      message = response.message;
+      message = err.response.message;
     } else {
       message = err.message;
     }
