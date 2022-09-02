@@ -21,3 +21,27 @@ export const tokenListFailure = (message) => {
     payload: { message },
   };
 };
+
+export const TOKEN_CREATE_PROGRESS = "TOKEN_CREATE_PROGRESS";
+export const createTokenProgress = () => {
+  return {
+    type: TOKEN_CREATE_PROGRESS,
+    payload: null,
+  };
+};
+
+export const TOKEN_CREATE_SUCCESS = "TOKEN_CREATE_SUCCESS";
+export const createTokenSuccess = (token) => {
+  return {
+    type: TOKEN_CREATE_SUCCESS,
+    payload: { token },
+  };
+};
+
+export const TOKEN_CREATE_FAILURE = "TOKEN_CREATE_FAILURE";
+export const createTokenFailure = (message) => {
+  return {
+    type: TOKEN_CREATE_FAILURE,
+    payload: { message },
+  };
+};

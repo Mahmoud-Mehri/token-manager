@@ -3,10 +3,16 @@ import {
   tokenListLoading,
   tokenListSuccess,
   tokenListFailure,
+  createTokenProgress,
+  createTokenSuccess,
+  createTokenFailure,
 } from "../actions/token-actions";
-import { ROUTE_TOKEN_LIST } from "../constants/token-constants";
+import {
+  Route_TOKEN_CREATE,
+  ROUTE_TOKEN_LIST,
+} from "../constants/token-constants";
 
-export const tokenListRequest = (data) => async (dispatch) => {
+export const tokenListRequest = () => async (dispatch) => {
   try {
     dispatch(tokenListLoading());
     const response = await axios.get(ROUTE_TOKEN_LIST);
@@ -27,5 +33,29 @@ export const tokenListRequest = (data) => async (dispatch) => {
       message = err.message;
     }
     dispatch(tokenListFailure(message));
+  }
+};
+
+export const createTokenRequest = (data) => async (dispatch) => {
+  try {
+    dispatch(createTokenProgress());
+    const response = await axios.get(Route_TOKEN_CREATE);
+    if (!!response.success) {
+      dispatch(createTokenSuccess(response.data));
+    } else {
+      if (response.message) {
+        throw { message: response.message };
+      } else {
+        throw { message: "Invalid response from server!" };
+      }
+    }
+  } catch (err) {
+    let message;
+    if (err.response) {
+      message = err.response.data;
+    } else {
+      message = err.message;
+    }
+    dispatch(createTokenFailure(message));
   }
 };
