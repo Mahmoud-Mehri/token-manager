@@ -39,7 +39,7 @@ export const tokenListRequest = () => async (dispatch) => {
 export const createTokenRequest = (data) => async (dispatch) => {
   try {
     dispatch(createTokenProgress());
-    const response = await axios.get(Route_TOKEN_CREATE);
+    const response = await axios.post(Route_TOKEN_CREATE, data);
     if (!!response.success) {
       dispatch(createTokenSuccess(response.data));
     } else {
