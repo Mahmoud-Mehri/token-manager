@@ -1,14 +1,20 @@
 import { newResponse } from "../model/general";
+import { Server } from "../model/server";
 import { Token } from "../model/token";
 import { User } from "../model/user";
-import { FungibleTokenController } from "../tokens/controller/ft-controller";
+import {
+  fungibleTokenController,
+  deployConfig,
+} from "../tokens/controller/ft-controller";
 import { NonFungibleController } from "../tokens/controller/nft-controller";
 
 export class TokenController {
-  private ftController: FungibleTokenController;
-  private nftController: NonFungibleController;
+  private ftController;
+  private nftController;
 
-  constructor() {}
+  constructor() {
+    this.ftController = fungibleTokenController();
+  }
 
   async findTokenById(_tokenId: number, _includeUser: boolean = false) {
     try {
@@ -96,11 +102,67 @@ export class TokenController {
   //   }
   // }
 
-  async mintToken(_tokenId: string, _accountAddr: string) {
+  async deployToken(
+    _tokenId: number,
+    _serverId: number,
+    _privateKey: string,
+    _accountAddr: string,
+    _initialSupply: string
+  ) {
+    try {
+      const token = await Token.findByPk(_tokenId);
+      if (!token) throw { message: "Token Not Found!" };
+      const server = await Server.findByPk(_serverId);
+      if (!server) throw { message: "Server Not Found!" };
+      const deployOptions: deployConfig = {
+        providerUrl: server.providerUrl,
+        esApiKey: "",
+        privateKey: _privateKey,
+        accountAddr: _accountAddr,
+        contractAddr: "",
+      };
+      const deployResult = await this.ftController.deployNewToken(
+        {
+          name: token.title,
+          symbol: token.symbol,
+          initSupply: _initialSupply,
+        },
+        deployOptions
+      );
+
+      // ...
+    } catch (err) {
+      return newResponse(false, err.message);
+    }
+  }
+
+  async setTokenOptions(_tokenId: number, { mintable, burnable, pausable }) {
+    try {
+      const token = await Token.findByPk(_tokenId);
+      if (!token) return newResponse(false, "Token not found!");
+      else {
+        if (token.tokenType === "FT") {
+          const promise = this.ftController.setOptions({
+            mintable: !!mintable,
+            burnable: !!burnable,
+            pausable: !!pausable,
+          });
+          promise.on();
+        } else if (token.tokenType === "NFT") {
+        } else {
+          throw { message: "Invalid Token Type!" };
+        }
+      }
+    } catch (err) {
+      return newResponse(false, err.message);
+    }
+  }
+
+  async mintToken(_tokenId: number, _accountAddr: string) {
     // ...
   }
 
-  async burnToken(_tokenId: string, _accountAddr: string) {
+  async burnToken(_tokenId: number, _accountAddr: string) {
     // ...
   }
 }
