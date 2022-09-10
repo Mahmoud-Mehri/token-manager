@@ -7,6 +7,7 @@ import {
   ForeignKey,
 } from "sequelize";
 import { User } from "./user";
+import { Deploy } from "./deploy";
 import { dbconnection } from "../db-connection";
 import { Account } from "./account";
 
@@ -17,17 +18,14 @@ class Token extends Model<
   declare id: CreationOptional<number>;
   declare tokenType: string;
   declare title: string;
-  declare status: string;
-  declare address: string;
-  declare createDate: Date;
-  declare deployDate: Date;
-  declare activeDate: Date;
-  declare creatorAddress: string;
-  declare ownerAddress: string;
+  declare name: string;
+  declare symbol: string;
+  declare description: string;
   declare userId: ForeignKey<User["id"]>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 }
+
 Token.init(
   {
     id: {
@@ -44,30 +42,17 @@ Token.init(
       type: DataTypes.STRING(100),
       allowNull: false,
     },
-    status: {
-      type: DataTypes.ENUM("CREATED", "PAUSED", "ACTIVE"),
-      defaultValue: "CREATED",
+    name: {
+      type: DataTypes.STRING(20),
       allowNull: false,
     },
-    address: {
-      type: DataTypes.STRING(42),
+    symbol: {
+      type: DataTypes.STRING(4),
       allowNull: false,
     },
-    createDate: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-    deployDate: {
-      type: DataTypes.DATE,
-    },
-    activeDate: {
-      type: DataTypes.DATE,
-    },
-    creatorAddress: {
-      type: DataTypes.STRING(42),
-    },
-    ownerAddress: {
-      type: DataTypes.STRING(42),
+    description: {
+      type: DataTypes.STRING(1000),
+      allowNull: true,
     },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
@@ -78,6 +63,11 @@ Token.init(
   }
 );
 
+Token.hasMany(Deploy, {
+  sourceKey: "id",
+  foreignKey: "tokenId",
+  as: "deploys",
+});
 // Token.belongsTo(User, { targetKey: "id" });
 
 export { Token };
