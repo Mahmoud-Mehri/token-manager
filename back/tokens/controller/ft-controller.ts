@@ -1,15 +1,18 @@
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { BigNumber, Contract, ContractFactory } from "ethers";
-import hardhat, { ethers } from "hardhat";
-import { EthereumProvider } from "hardhat/types";
+import Web3 from "web3";
+import HDWalletProvider from "@truffle/hdwallet-provider";
 import { newResponse } from "../../model/general";
-import promievent from "promievent";
+import { HttpProvider } from "web3-core/types/index";
+import { AbiItem } from "web3-utils";
+import { Contract } from "web3-eth-contract/types/index";
+import PromiEvent from "promievent";
+import fs from "fs";
 
 export type deployConfig = {
+  providerUrl: string;
+  esApiKey: string; // Ether Scan API Key
   privateKey: string;
-  apiUrl: string;
-  esApiKey: string;
-  ownerAddress: string;
+  accountAddr: string;
+  contractAddr: string;
 };
 
 export type FungibleTokenInfo = {
@@ -22,204 +25,177 @@ export type FungibleTokenInfo = {
   pausable: boolean;
 };
 
-export class FungibleTokenController {
-  private _provider: EthereumProvider;
-  private _contract: ContractFactory;
-  private _token: Contract;
-  private _deployedToken: Contract;
-  private _accounts: SignerWithAddress[];
-  private _initialSupply: BigNumber;
-  private _decimals: number;
-  private _OwnerAddress: string;
-  private _owner: SignerWithAddress;
+var provider: HttpProvider;
+var walletProvider: HDWalletProvider;
+var web3: Web3;
+var contract: Contract;
+var abi: AbiItem;
+var byteCode: string;
+var account: string;
 
-  constructor(deployConfig: deployConfig, tokenInfo_: FungibleTokenInfo) {
-    this._contract = null;
-    this._token = null;
-    this._deployedToken = null;
-    this._accounts = [];
-    this._decimals = tokenInfo_.decimals;
-    this._initialSupply = BigNumber.from(tokenInfo_.initialSupply);
-    this._OwnerAddress = deployConfig.ownerAddress;
+const initialize = ({ providerUrl, privateKey, contractAddr }) => {
+  provider = new Web3.providers.HttpProvider(`${providerUrl}`, {});
+  walletProvider = new HDWalletProvider({
+    privateKeys: [`${privateKey}`],
+    providerOrUrl: provider,
+  });
+  web3 = new Web3(walletProvider);
+  if (contractAddr && contractAddr !== "") {
+    contract = new web3.eth.Contract(abi, contractAddr);
+  } else {
+    contract = new web3.eth.Contract(abi);
   }
 
-  private _getSignerByAddress(address_: string) {
-    const account = this._accounts.find((acc) => {
-      return acc.address == address_;
+  account = walletProvider.getAddress();
+};
+
+const getContractInfo = (tokenType: string) => {
+  let fileName: string;
+  if (tokenType.toUpperCase() === "FT") {
+  } else {
+  }
+  byteCode = fs.readFileSync(`${fileName}`).toString();
+  abi = JSON.parse(fs.readFileSync(`${fileName}`).toString());
+};
+
+export function fungibleTokenController() {
+  this.deployNewToken = async (
+    { name, symbol, initSupply },
+    deployOptions: deployConfig
+  ) => {
+    return new PromiEvent((resolve, reject) => {
+      initialize({
+        providerUrl: deployOptions.providerUrl,
+        privateKey: deployOptions.privateKey,
+        contractAddr: "",
+      });
+
+      contract
+        .deploy({ data: byteCode, arguments: [name, symbol, initSupply] })
+        .send({
+          from: `${account}`,
+        })
+        .on("error", function (err) {})
+        .on("transactionHash", function (tranHash) {})
+        .on("receipt", function (receipt) {})
+        .on("confirmation", function (confirmationNumber, receipt) {});
     });
+  };
 
-    if (!account) return null;
-    return account;
-  }
+  this.setOptions = async (
+    { mintable, burnable, pausable },
+    deployOptions: deployConfig
+  ) => {
+    try {
+      initialize({
+        providerUrl: deployOptions.providerUrl,
+        privateKey: deployOptions.privateKey,
+        contractAddr: deployOptions.contractAddr,
+      });
 
-  private _checkDeployed() {
-    return !this._token;
-  }
+      await contract.methods.setOptions([mintable, burnable, pausable]).send({
+        from: `${account}`,
+      });
+      return newResponse(true, "");
+    } catch (err) {
+      return newResponse(false, err.message);
+    }
+  };
 
-  async deployNewToken({ name, symbol, initSupply, decimals }) {
-    this._decimals = decimals;
-    this._accounts = await ethers.getSigners();
-    this._initialSupply = ethers.utils.parseEther(`${initSupply}`);
-    this._contract = await ethers.getContractFactory("ERC20Token");
-    this._token = await this._contract.deploy(
-      `${name}`,
-      `${symbol}`,
-      `${this._decimals}`,
-      `${this._initialSupply}`
-    );
-    this._deployedToken = await this._token.deployed();
-  }
+  this.mint = async (
+    { address, amount, data },
+    deployOptions: deployConfig
+  ) => {
+    try {
+      initialize({
+        providerUrl: deployOptions.providerUrl,
+        privateKey: deployOptions.privateKey,
+        contractAddr: deployOptions.contractAddr,
+      });
 
-  async setOptions(mintable: boolean, burnable: boolean, pausable: boolean) {
-    const promise = new promievent(async (resolve, reject) => {
-      if (!this._checkDeployed()) {
-        throw new Error("Token is not Deployed");
+      if (address && address !== "") {
+        await contract.methods.mintTo([address, amount, data]).send({
+          from: `${account}`,
+        });
+      } else {
+        await contract.methods.mint([amount, data]).send({
+          from: `${account}`,
+        });
       }
 
-      try {
-        const response = await this._token.setOptions(
-          `${mintable}`,
-          `${burnable}`,
-          `${pausable}`
-        );
-        promise.emit("sent", [response.hash]);
+      return newResponse(true, "");
+    } catch (err) {
+      return newResponse(false, err.message);
+    }
+  };
 
-        const reciept = await response.wait();
-        if (reciept.status == 1) {
-          promise.emit("confirmed");
-        } else {
-          promise.emit("declined");
-        }
+  this.burn = async ({ address, amount }, deployOptions: deployConfig) => {
+    try {
+      initialize({
+        providerUrl: deployOptions.providerUrl,
+        privateKey: deployOptions.privateKey,
+        contractAddr: deployOptions.contractAddr,
+      });
 
-        resolve(newResponse(true, reciept));
-      } catch (err) {
-        promise.emit("error", [err]);
-        reject(newResponse(false, err.message));
-      }
-    });
-
-    return promise;
-  }
-
-  async mint(address_: string, amount_: string) {
-    const promise = new promievent(async (resolve, reject) => {
-      if (!this._checkDeployed()) {
-        throw new Error("Token is not Deployed");
+      if (address && address !== "") {
+        await contract.methods.burnFrom([address, amount]).send({
+          from: `${account}`,
+        });
+      } else {
+        await contract.methods.burn([amount]).send({
+          from: `${account}`,
+        });
       }
 
-      try {
-        const amount = ethers.utils.parseEther(amount_);
-        let response;
-        if (address_ && address_ !== "") {
-          response = await this._token.mintTo(`${address_}`, `${amount}`);
-        } else {
-          response = await this._token.mint(`${amount}`);
-        }
-        promise.emit("sent", [response.hash]);
+      return newResponse(true, "");
+    } catch (err) {
+      return newResponse(false, err.message);
+    }
+  };
 
-        const reciept = await response.wait();
-        if (reciept.status == 1) {
-          promise.emit("confirmed");
-        } else {
-          promise.emit("declined");
-        }
+  this.transfer = async ({ from, to, amount }, deployOptions: deployConfig) => {
+    try {
+      initialize({
+        providerUrl: deployOptions.providerUrl,
+        privateKey: deployOptions.privateKey,
+        contractAddr: deployOptions.contractAddr,
+      });
 
-        resolve(newResponse(true, reciept));
-      } catch (err) {
-        promise.emit("error", [err]);
-        reject(newResponse(false, err.message));
-      }
-    });
-
-    return promise;
-  }
-
-  async burn(address_: string, amount_: string) {
-    const promise = new promievent(async (resolve, reject) => {
-      if (!this._checkDeployed()) {
-        throw new Error("Token is not Deployed");
+      if (from && from !== "") {
+        await contract.methods.transferFrom([from, to, amount]).send({
+          from: `${account}`,
+        });
+      } else {
+        await contract.methods.transfer([to, amount]).send({
+          from: `${account}`,
+        });
       }
 
-      try {
-        const amount = ethers.utils.parseEther(amount_);
-        let response;
-        if (address_ && address_ !== "") {
-          response = await this._token.burnFrom(`${address_}`, `${amount}`);
-        } else {
-          response = await this._token.burn(`${amount}`);
-        }
-        promise.emit("sent", [response.hash]);
+      return newResponse(true, "");
+    } catch (err) {
+      return newResponse(false, err.message);
+    }
+  };
 
-        const reciept = await response.wait();
-        if (reciept.status == 1) {
-          promise.emit("confirmed");
-        } else {
-          promise.emit("declined");
-        }
+  this.getBalance = async ({ address }, deployOptions: deployConfig) => {
+    try {
+      initialize({
+        providerUrl: deployOptions.providerUrl,
+        privateKey: deployOptions.privateKey,
+        contractAddr: deployOptions.contractAddr,
+      });
 
-        resolve(newResponse(true, reciept));
-      } catch (err) {
-        promise.emit("error", [err]);
-        reject(newResponse(false, err.message));
-      }
-    });
-
-    return promise;
-  }
-
-  async transfer(from_: string, to_: string, amount_: string) {
-    const promise = new promievent(async (resolve, reject) => {
-      if (!this._checkDeployed()) {
-        throw new Error("Token is not Deployed");
+      if (address && address !== "") {
+        await contract.methods.balanceOf([address]).send({
+          from: `${account}`,
+        });
+      } else {
+        throw { message: "Invalid Address" };
       }
 
-      try {
-        const amount = ethers.utils.parseEther(amount_);
-        let response;
-        if (from_ && from_ !== "") {
-          response = await this._token.transferFrom(
-            `${from_}`,
-            `${to_}`,
-            `${amount}`
-          );
-        } else {
-          response = await this._token.transfer(`${to_}`, `${amount}`);
-        }
-        promise.emit("sent", [response.hash]);
-
-        const reciept = await response.wait();
-        if (reciept.status == 1) {
-          promise.emit("confirmed");
-        } else {
-          promise.emit("declined");
-        }
-
-        resolve(newResponse(true, reciept));
-      } catch (err) {
-        promise.emit("error", [err]);
-        reject(newResponse(false, err.message));
-      }
-    });
-
-    return promise;
-  }
-
-  async getBalance(address_: string) {
-    const promise = new promievent(async (resolve, reject) => {
-      if (!this._checkDeployed()) {
-        throw new Error("Token is not Deployed");
-      }
-
-      try {
-        const balance = await this._token.balanceOf(`${address_}`);
-
-        resolve(newResponse(true, balance));
-      } catch (err) {
-        promise.emit("error", [err]);
-        reject(newResponse(false, err.message));
-      }
-    });
-
-    return promise;
-  }
+      return newResponse(true, "");
+    } catch (err) {
+      return newResponse(false, err.message);
+    }
+  };
 }
