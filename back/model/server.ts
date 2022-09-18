@@ -47,4 +47,9 @@ Server.init(
   }
 );
 
+const syncTable = async () => {
+  await Server.sync({ alter: true });
+};
+syncTable();
+
 export { Server };

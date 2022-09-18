@@ -68,6 +68,16 @@ Token.hasMany(Deploy, {
   foreignKey: "tokenId",
   as: "deploys",
 });
-// Token.belongsTo(User, { targetKey: "id" });
+
+// Token.belongsTo(User, {
+//   targetKey: "id",
+//   foreignKey: "userId",
+//   as: "tokens",
+// });
+
+const syncTable = async () => {
+  await Token.sync({ alter: true, force: true });
+};
+syncTable();
 
 export { Token };

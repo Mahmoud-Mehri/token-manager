@@ -41,7 +41,7 @@ Deploy.init(
     },
     status: {
       type: DataTypes.ENUM("PAUSED", "ACTIVE"),
-      defaultValue: "CREATED",
+      defaultValue: "ACTIVE",
       allowNull: false,
     },
     deployAccountAddress: {
@@ -70,5 +70,10 @@ Deploy.init(
     modelName: "deploy",
   }
 );
+
+const syncTable = async () => {
+  await Deploy.sync({ alter: true, force: true });
+};
+syncTable();
 
 export { Deploy };

@@ -53,7 +53,7 @@ User.init(
       },
     },
     password: {
-      type: DataTypes.STRING(16),
+      type: DataTypes.STRING(64),
       allowNull: false,
     },
     createdAt: DataTypes.DATE,
@@ -82,5 +82,10 @@ User.hasMany(Token, {
   foreignKey: "userId",
   as: "tokens",
 });
+
+const syncTable = async () => {
+  await User.sync({ alter: true });
+};
+syncTable();
 
 export { User };

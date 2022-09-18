@@ -46,4 +46,9 @@ Account.init(
 
 // Account.belongsTo(User, { targetKey: "id" });
 
+const syncTable = async () => {
+  await Account.sync({ alter: true });
+};
+syncTable();
+
 export { Account };
