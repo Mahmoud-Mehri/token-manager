@@ -5,68 +5,69 @@ import { newResponse } from "../model/general";
 export const userRouter = Router();
 const userController = new UserController();
 
-userRouter.get("/", (req, res) => {
-  userController
-    .allUsers()
-    .then((users) => {
-      res.status(200).json(newResponse(true, users));
-    })
-    .catch((err) => {
-      res.status(500).json(newResponse(false, err.message));
-    });
-});
-
-userRouter.get("/:id", (req, res) => {
+userRouter.get("/", async (req, res) => {
   try {
-    const userId = parseInt(req.params.id);
-    userController
-      .findUserById(userId)
-      .then((user) => res.status(200).json(newResponse(true, user)))
-      .catch((err) => res.status(500).json(newResponse(false, err.message)));
+    const result = await userController.allUsers();
+    if (!!result.success) {
+      res.status(200).json(result);
+    } else {
+      res.status(500).json(result);
+    }
   } catch (err) {
     res.status(500).json(newResponse(false, err.message));
   }
 });
 
-userRouter.post("/", (req, res) => {
-  console.log(req.body);
-  userController
-    .newUser(req.body)
-    .then((user) => {
-      res.json(newResponse(true, user));
-    })
-    .catch((err) => {
-      res.json(newResponse(false, err.message));
-    });
-});
-
-userRouter.put("/:id", (req, res) => {
+userRouter.get("/:id", async (req, res) => {
   try {
     const userId = parseInt(req.params.id);
-    userController
-      .updateUser(userId, req.body)
-      .then((user) => {
-        res.status(200).json(newResponse(true, user));
-      })
-      .catch((err) => {
-        res.status(500).json(newResponse(false, err.message));
-      });
+    const result = await userController.findUserById(userId);
+    if (!!result.success) {
+      res.status(200).json(result);
+    } else {
+      res.status(500).json(result);
+    }
   } catch (err) {
     res.status(500).json(newResponse(false, err.message));
   }
 });
 
-userRouter.delete("/:id", (req, res) => {
+userRouter.post("/", async (req, res) => {
+  try {
+    const result = await userController.newUser(req.body);
+    if (!!result.success) {
+      res.status(200).json(result);
+    } else {
+      res.status(500).json(result);
+    }
+  } catch (err) {
+    res.status(500).json(newResponse(false, err.message));
+  }
+});
+
+userRouter.put("/:id", async (req, res) => {
   try {
     const userId = parseInt(req.params.id);
-    userController
-      .deleteUser(userId)
-      .then(() => {
-        res.status(200).json(newResponse(true, userId));
-      })
-      .catch((err) => {
-        res.status(500).json(newResponse(false, err.message));
-      });
+    const result = await userController.updateUser(userId, req.body);
+    if (!!result.success) {
+      res.status(200).json(result);
+    } else {
+      res.status(500).json(result);
+    }
+  } catch (err) {
+    res.status(500).json(newResponse(false, err.message));
+  }
+});
+
+userRouter.delete("/:id", async (req, res) => {
+  try {
+    const userId = parseInt(req.params.id);
+    const result = await userController.deleteUser(userId);
+    if (!!result.success) {
+      res.status(200).json(result);
+    } else {
+      res.status(500).json(result);
+    }
   } catch (err) {
     res.status(500).json(newResponse(false, err.message));
   }
