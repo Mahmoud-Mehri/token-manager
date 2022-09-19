@@ -47,7 +47,7 @@ Account.init(
 // Account.belongsTo(User, { targetKey: "id" });
 
 const syncTable = async () => {
-  await Account.sync({ alter: true });
+  await Account.sync({ force: true });
 };
 syncTable();
 

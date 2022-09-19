@@ -48,7 +48,7 @@ Server.init(
 );
 
 const syncTable = async () => {
-  await Server.sync({ alter: true });
+  await Server.sync({ force: true });
 };
 syncTable();
 

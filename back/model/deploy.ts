@@ -62,6 +62,8 @@ Deploy.init(
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
+    tokenId: DataTypes.INTEGER,
+    serverId: DataTypes.INTEGER,
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
   },
@@ -72,7 +74,7 @@ Deploy.init(
 );
 
 const syncTable = async () => {
-  await Deploy.sync({ alter: true, force: true });
+  await Deploy.sync({ force: true });
 };
 syncTable();
 

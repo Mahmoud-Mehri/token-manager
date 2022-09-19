@@ -54,6 +54,7 @@ Token.init(
       type: DataTypes.STRING(1000),
       allowNull: true,
     },
+    userId: DataTypes.INTEGER,
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
   },
@@ -69,14 +70,8 @@ Token.hasMany(Deploy, {
   as: "deploys",
 });
 
-// Token.belongsTo(User, {
-//   targetKey: "id",
-//   foreignKey: "userId",
-//   as: "tokens",
-// });
-
 const syncTable = async () => {
-  await Token.sync({ alter: true, force: true });
+  await Token.sync({ force: true });
 };
 syncTable();
 

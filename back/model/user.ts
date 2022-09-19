@@ -84,7 +84,7 @@ User.hasMany(Token, {
 });
 
 const syncTable = async () => {
-  await User.sync({ alter: true });
+  await User.sync({ force: true });
 };
 syncTable();
 
