@@ -3,17 +3,18 @@ import { Server } from "../model/server";
 import { Token } from "../model/token";
 import { User } from "../model/user";
 import {
-  fungibleTokenController,
+  FungibleTokenController,
   deployConfig,
 } from "../tokens/controller/ft-controller";
 import { NonFungibleController } from "../tokens/controller/nft-controller";
 
 export class TokenController {
-  private ftController;
-  private nftController;
+  private ftController: FungibleTokenController;
+  private nftController: NonFungibleController;
 
   constructor() {
-    this.ftController = fungibleTokenController();
+    this.ftController = new FungibleTokenController();
+    this.nftController = new NonFungibleController();
   }
 
   async findTokenById(_tokenId: number, _includeUser: boolean = false) {
@@ -26,7 +27,11 @@ export class TokenController {
           },
         });
       else token = await Token.findByPk(_tokenId);
-      return newResponse(true, token);
+      if (token) {
+        return newResponse(true, token);
+      } else {
+        return newResponse(false, "Token Not Found !");
+      }
     } catch (err) {
       return newResponse(false, err.message);
     }
@@ -38,6 +43,19 @@ export class TokenController {
       if (_includeUser)
         tokens = await Token.findAll({ include: { model: User } });
       else tokens = await Token.findAll({});
+      return newResponse(true, tokens);
+    } catch (err) {
+      return newResponse(false, err.message);
+    }
+  }
+
+  async getUserTokens(_userId: number) {
+    try {
+      const tokens = await Token.findAll({
+        where: {
+          userId: _userId,
+        },
+      });
       return newResponse(true, tokens);
     } catch (err) {
       return newResponse(false, err.message);
@@ -127,10 +145,11 @@ export class TokenController {
           symbol: token.symbol,
           initSupply: _initialSupply,
         },
-        deployOptions
+        deployOptions,
+        false
       );
 
-      // ...
+      return newResponse(true, deployResult);
     } catch (err) {
       return newResponse(false, err.message);
     }
@@ -142,12 +161,14 @@ export class TokenController {
       if (!token) return newResponse(false, "Token not found!");
       else {
         if (token.tokenType === "FT") {
-          const promise = this.ftController.setOptions({
-            mintable: !!mintable,
-            burnable: !!burnable,
-            pausable: !!pausable,
-          });
-          promise.on();
+          const promise = this.ftController.setOptions(
+            {
+              mintable: !!mintable,
+              burnable: !!burnable,
+              pausable: !!pausable,
+            },
+            null
+          );
         } else if (token.tokenType === "NFT") {
         } else {
           throw { message: "Invalid Token Type!" };

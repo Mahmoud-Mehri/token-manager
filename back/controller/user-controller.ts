@@ -1,3 +1,6 @@
+import { Token } from "../model/token";
+import { Account } from "../model/account";
+import { Deploy } from "../model/deploy";
 import { newResponse } from "../model/general";
 import { User } from "../model/user";
 
@@ -10,7 +13,17 @@ export class UserController {
     includeTokens: boolean = false
   ) {
     try {
-      const user = await User.findByPk(_userId);
+      const user = await User.findByPk(_userId, {
+        include:
+          includeAccounts || includeTokens
+            ? [
+                includeAccounts ? { model: Account } : {},
+                includeTokens
+                  ? { model: Token, include: [{ model: Deploy }] }
+                  : {},
+              ]
+            : [],
+      });
       if (user) return newResponse(true, user);
       else throw new Error("User Not Found");
     } catch (err) {
@@ -28,6 +41,15 @@ export class UserController {
         where: {
           email: _email,
         },
+        include:
+          includeAccounts || includeTokens
+            ? [
+                includeAccounts ? { model: Account } : {},
+                includeTokens
+                  ? { model: Token, include: [{ model: Deploy }] }
+                  : {},
+              ]
+            : [],
       });
       if (user) return newResponse(true, user);
       throw new Error("User Not Found");
@@ -41,7 +63,17 @@ export class UserController {
     includeTokens: boolean = false
   ) {
     try {
-      const users = await User.findAll({});
+      const users = await User.findAll({
+        include:
+          includeAccounts || includeTokens
+            ? [
+                includeAccounts ? { model: Account } : {},
+                includeTokens
+                  ? { model: Token, include: [{ model: Deploy }] }
+                  : {},
+              ]
+            : [],
+      });
       return newResponse(true, users);
     } catch (err) {
       return newResponse(false, err.message);
