@@ -49,43 +49,60 @@ const initialize = ({ providerUrl, privateKey, contractAddr }) => {
   account = walletProvider.getAddress();
 };
 
-const getContractInfo = (tokenType: string) => {
+const getContractData = (tokenType: string) => {
   let fileName: string;
   if (tokenType.toUpperCase() === "FT") {
-  } else {
+    fileName = "FT_File_Address";
+  } else if (tokenType.toUpperCase() === "NFT") {
+    fileName = "NFT_File_Address";
   }
   byteCode = fs.readFileSync(`${fileName}`).toString();
   abi = JSON.parse(fs.readFileSync(`${fileName}`).toString());
 };
 
-export function fungibleTokenController() {
-  this.deployNewToken = async (
+export class FungibleTokenController {
+  async deployNewToken(
     { name, symbol, initSupply },
-    deployOptions: deployConfig
-  ) => {
-    return new PromiEvent((resolve, reject) => {
-      initialize({
-        providerUrl: deployOptions.providerUrl,
-        privateKey: deployOptions.privateKey,
-        contractAddr: "",
-      });
+    deployOptions: deployConfig,
+    waitForConfirmation: boolean = false
+  ) {
+    return new Promise((resolve, reject) => {
+      try {
+        initialize({
+          providerUrl: deployOptions.providerUrl,
+          privateKey: deployOptions.privateKey,
+          contractAddr: "",
+        });
 
-      contract
-        .deploy({ data: byteCode, arguments: [name, symbol, initSupply] })
-        .send({
-          from: `${account}`,
-        })
-        .on("error", function (err) {})
-        .on("transactionHash", function (tranHash) {})
-        .on("receipt", function (receipt) {})
-        .on("confirmation", function (confirmationNumber, receipt) {});
+        contract
+          .deploy({ data: byteCode, arguments: [name, symbol, initSupply] })
+          .send({
+            from: `${account}`,
+          })
+          .on("error", function (err) {
+            reject(newResponse(false, err.message));
+          })
+          .on("transactionHash", function (tranHash) {})
+          .on("receipt", function (receipt) {
+            if (!waitForConfirmation) {
+              resolve(newResponse(true, receipt));
+            }
+          })
+          .on("confirmation", function (confirmationNumber, receipt) {
+            if (waitForConfirmation) {
+              resolve(newResponse(true, { confirmationNumber, receipt }));
+            }
+          });
+      } catch (err) {
+        reject(newResponse(false, err.message));
+      }
     });
-  };
+  }
 
-  this.setOptions = async (
+  async setOptions(
     { mintable, burnable, pausable },
     deployOptions: deployConfig
-  ) => {
+  ) {
     try {
       initialize({
         providerUrl: deployOptions.providerUrl,
@@ -100,12 +117,9 @@ export function fungibleTokenController() {
     } catch (err) {
       return newResponse(false, err.message);
     }
-  };
+  }
 
-  this.mint = async (
-    { address, amount, data },
-    deployOptions: deployConfig
-  ) => {
+  async mint({ address, amount, data }, deployOptions: deployConfig) {
     try {
       initialize({
         providerUrl: deployOptions.providerUrl,
@@ -127,9 +141,9 @@ export function fungibleTokenController() {
     } catch (err) {
       return newResponse(false, err.message);
     }
-  };
+  }
 
-  this.burn = async ({ address, amount }, deployOptions: deployConfig) => {
+  async burn({ address, amount }, deployOptions: deployConfig) {
     try {
       initialize({
         providerUrl: deployOptions.providerUrl,
@@ -151,9 +165,9 @@ export function fungibleTokenController() {
     } catch (err) {
       return newResponse(false, err.message);
     }
-  };
+  }
 
-  this.transfer = async ({ from, to, amount }, deployOptions: deployConfig) => {
+  async transfer({ from, to, amount }, deployOptions: deployConfig) {
     try {
       initialize({
         providerUrl: deployOptions.providerUrl,
@@ -175,9 +189,9 @@ export function fungibleTokenController() {
     } catch (err) {
       return newResponse(false, err.message);
     }
-  };
+  }
 
-  this.getBalance = async ({ address }, deployOptions: deployConfig) => {
+  async getBalance({ address }, deployOptions: deployConfig) {
     try {
       initialize({
         providerUrl: deployOptions.providerUrl,
@@ -197,5 +211,5 @@ export function fungibleTokenController() {
     } catch (err) {
       return newResponse(false, err.message);
     }
-  };
+  }
 }
