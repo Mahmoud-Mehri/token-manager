@@ -103,7 +103,7 @@ const Register = ({
                 formik.touched.firstName && formik.errors.firstName
               )}
               fullWidth
-              helperText={formik.touched.firstName && formik.errors.firstName}
+              // helperText={formik.touched.firstName && formik.errors.firstName}
               label="First Name"
               margin="dense"
               name="firstName"
@@ -116,7 +116,7 @@ const Register = ({
             <TextField
               error={Boolean(formik.touched.lastName && formik.errors.lastName)}
               fullWidth
-              helperText={formik.touched.lastName && formik.errors.lastName}
+              // helperText={formik.touched.lastName && formik.errors.lastName}
               label="Last Name"
               margin="dense"
               name="lastName"
@@ -129,7 +129,7 @@ const Register = ({
             <TextField
               error={Boolean(formik.touched.email && formik.errors.email)}
               fullWidth
-              helperText={formik.touched.email && formik.errors.email}
+              // helperText={formik.touched.email && formik.errors.email}
               label="Email Address"
               margin="dense"
               name="email"
@@ -143,7 +143,7 @@ const Register = ({
             <TextField
               error={Boolean(formik.touched.password && formik.errors.password)}
               fullWidth
-              helperText={formik.touched.password && formik.errors.password}
+              // helperText={formik.touched.password && formik.errors.password}
               label="Password"
               margin="dense"
               name="password"

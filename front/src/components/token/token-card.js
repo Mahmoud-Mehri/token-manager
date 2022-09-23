@@ -9,8 +9,8 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import { Clock as ClockIcon } from "../../icons/clock";
-import { Download as DownloadIcon } from "../../icons/download";
+import { Assignment as EmptyIcon } from "@mui/icons-material/Assignment";
+import { Settings as ManageIcon } from "@mui/icons-material/Settings";
 
 export const TokenCard = ({ token, ...rest }) => (
   <Card
@@ -29,7 +29,11 @@ export const TokenCard = ({ token, ...rest }) => (
           pb: 3,
         }}
       >
-        <Avatar alt="Product" src={token.media} variant="square" />
+        {!!token.icon ? (
+          <Avatar alt="Product" src={token.icon} variant="square" />
+        ) : (
+          <EmptyIcon color="action" />
+        )}
       </Box>
       <Typography align="center" color="textPrimary" gutterBottom variant="h5">
         {token.title}
@@ -49,7 +53,7 @@ export const TokenCard = ({ token, ...rest }) => (
             display: "flex",
           }}
         >
-          <ClockIcon color="action" />
+          <EmptyIcon color="action" />
           <Typography
             color="textSecondary"
             display="inline"
@@ -66,14 +70,14 @@ export const TokenCard = ({ token, ...rest }) => (
             display: "flex",
           }}
         >
-          <DownloadIcon color="action" />
+          <ManageIcon />
           <Typography
             color="textSecondary"
             display="inline"
             sx={{ pl: 1 }}
             variant="body2"
           >
-            {token.totalDownloads} Downloads
+            Manage Token
           </Typography>
         </Grid>
       </Grid>

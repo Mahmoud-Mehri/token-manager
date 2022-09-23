@@ -22,8 +22,16 @@ import {
 } from "../redux/selectors/user-selectors";
 import { userLoginRequest } from "../redux/thunks/user-thunk";
 
-const Login = (inProgress, user, error, message, onLoginClicked, ...props) => {
+const Login = ({
+  inProgress,
+  user,
+  error,
+  message,
+  onLoginClicked,
+  ...props
+}) => {
   const fromDlg = !!props.dialog;
+  console.log(`From Dialog: ${fromDlg}`);
   // const router = useRouter();
   const formik = useFormik({
     initialValues: {
@@ -58,7 +66,7 @@ const Login = (inProgress, user, error, message, onLoginClicked, ...props) => {
 
   return (
     <>
-      <title>Login | Material Kit</title>
+      <title>Login | Token Manager</title>
       <Box
         component="main"
         sx={{
@@ -129,7 +137,7 @@ const Login = (inProgress, user, error, message, onLoginClicked, ...props) => {
             <TextField
               error={Boolean(formik.touched.email && formik.errors.email)}
               fullWidth
-              helperText={formik.touched.email && formik.errors.email}
+              // helperText={formik.touched.email && formik.errors.email}
               label="Email Address"
               margin="dense"
               name="email"
@@ -143,7 +151,7 @@ const Login = (inProgress, user, error, message, onLoginClicked, ...props) => {
             <TextField
               error={Boolean(formik.touched.password && formik.errors.password)}
               fullWidth
-              helperText={formik.touched.password && formik.errors.password}
+              // helperText={formik.touched.password && formik.errors.password}
               label="Password"
               margin="dense"
               name="password"
@@ -207,4 +215,4 @@ const mapDispatchToProps = (dispatch) => ({
   onLoginClicked: (data) => dispatch(userLoginRequest(data)),
 });
 
-export default connect(mapStateToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

@@ -1,4 +1,5 @@
 {
+  "cluster_mode": false,
   "auth": {
     "jwtSecret": "JWT_SECRET_KEY",
     "hashSaltRound": 10,
@@ -12,5 +13,8 @@
   "mongodb": {
     "host": "localhost",
     "port": 37017
+  },
+  "postgres": {
+    "logging": false
   }
 }

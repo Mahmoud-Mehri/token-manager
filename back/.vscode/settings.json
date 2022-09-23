@@ -1,0 +1,4 @@
+{
+  "eth-abi-interactive.privateKeysFile": "/home/mahmoud/.eth-abi-interactive/keys.json",
+  "eth-abi-interactive.nodeURI": "/home/mahmoud/projects/token-manager/back/tokens/contracts/output/tokens_contracts_erc-fungible_sol_FungibleToken.abi"
+}
