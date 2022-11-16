@@ -8,7 +8,7 @@ import {
 } from "sequelize";
 import { Server } from "./server";
 import { Token } from "./token";
-import { dbconnection } from "../db-connection";
+import { sqlConnection } from "../db-connection";
 
 class Deploy extends Model<
   InferAttributes<Deploy>,
@@ -68,14 +68,9 @@ Deploy.init(
     updatedAt: DataTypes.DATE,
   },
   {
-    sequelize: dbconnection,
+    sequelize: sqlConnection,
     modelName: "deploy",
   }
 );
-
-const syncTable = async () => {
-  await Deploy.sync({ force: true });
-};
-syncTable();
 
 export { Deploy };

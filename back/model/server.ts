@@ -5,7 +5,7 @@ import {
   InferCreationAttributes,
   DataTypes,
 } from "sequelize";
-import { dbconnection } from "../db-connection";
+import { sqlConnection } from "../db-connection";
 
 class Server extends Model<
   InferAttributes<Server>,
@@ -42,14 +42,9 @@ Server.init(
     updatedAt: DataTypes.DATE,
   },
   {
-    sequelize: dbconnection,
+    sequelize: sqlConnection,
     modelName: "server",
   }
 );
-
-const syncTable = async () => {
-  await Server.sync({ force: true });
-};
-syncTable();
 
 export { Server };

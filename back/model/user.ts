@@ -8,19 +8,17 @@ import {
 } from "sequelize";
 import { Token } from "./token";
 import { Account } from "./account";
-import { dbconnection } from "../db-connection";
+import { sqlConnection } from "../db-connection";
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare id: CreationOptional<number>;
-  declare firstName: string;
-  declare lastName: string;
   declare email: string;
   declare password: string;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 
   async validatePassword(pass: string) {
-    return await bcrypt.compare(pass, this.password);
+    return bcrypt.compare(pass, this.password);
   }
 }
 
@@ -31,37 +29,23 @@ User.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    firstName: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
-    },
-    lastName: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
-    },
     email: {
-      type: DataTypes.STRING(200),
-      unique: {
-        name: "email",
-        msg: "Email Address is already used",
-      },
+      type: DataTypes.STRING(100),
       allowNull: false,
       validate: {
-        isEmail: {
-          msg: "Email Address is not valid",
-        },
+        isEmail: { msg: "Email Address is not valid" },
       },
     },
     password: {
-      type: DataTypes.STRING(64),
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
   },
   {
-    sequelize: dbconnection,
-    modelName: "user",
+    sequelize: sqlConnection,
+    modelName: "User",
     hooks: {
       beforeCreate: async function (user, options) {
         const salt = await bcrypt.genSalt(10);
@@ -82,10 +66,5 @@ User.hasMany(Token, {
   foreignKey: "userId",
   as: "tokens",
 });
-
-const syncTable = async () => {
-  await User.sync({ force: true });
-};
-syncTable();
 
 export { User };

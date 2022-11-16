@@ -1,74 +1,49 @@
 import { Router } from "express";
 import { UserController } from "../controller/user-controller";
-import { newResponse } from "../model/general";
+import { removeErrorCode } from "../model/general";
 
 export const userRouter = Router();
 const userController = new UserController();
 
 userRouter.get("/", async (req, res) => {
-  try {
-    const result = await userController.allUsers();
-    if (!!result.success) {
-      res.status(200).json(result);
-    } else {
-      res.status(500).json(result);
-    }
-  } catch (err) {
-    res.status(500).json(newResponse(false, err.message));
-  }
+  const userId = req.session.user.id;
+
+  userController.allUsers(userId).then((result) => {
+    res.status(result.errorCode).json(removeErrorCode(result));
+  });
 });
 
 userRouter.get("/:id", async (req, res) => {
-  try {
-    const userId = parseInt(req.params.id);
-    const result = await userController.findUserById(userId);
-    if (!!result.success) {
-      res.status(200).json(result);
-    } else {
-      res.status(500).json(result);
-    }
-  } catch (err) {
-    res.status(500).json(newResponse(false, err.message));
-  }
+  const userId = req.session.user.id;
+  const lookupUserId = parseInt(req.params.id);
+
+  userController.findUserById(userId, lookupUserId).then((result) => {
+    res.status(result.errorCode).json(removeErrorCode(result));
+  });
 });
 
 userRouter.post("/", async (req, res) => {
-  try {
-    const result = await userController.newUser(req.body);
-    if (!!result.success) {
-      res.status(200).json(result);
-    } else {
-      res.status(500).json(result);
-    }
-  } catch (err) {
-    res.status(500).json(newResponse(false, err.message));
-  }
+  const userId = req.session.user.id;
+
+  userController.newUser(userId, req.body).then((result) => {
+    res.status(result.errorCode).json(removeErrorCode(result));
+  });
 });
 
 userRouter.put("/:id", async (req, res) => {
-  try {
-    const userId = parseInt(req.params.id);
-    const result = await userController.updateUser(userId, req.body);
-    if (!!result.success) {
-      res.status(200).json(result);
-    } else {
-      res.status(500).json(result);
-    }
-  } catch (err) {
-    res.status(500).json(newResponse(false, err.message));
-  }
+  const userId = req.session.user.id;
+  const lookupUserId = parseInt(req.params.id);
+
+  userController.updateUser(userId, lookupUserId, req.body).then((result) => {
+    res.status(result.errorCode).json(removeErrorCode(result));
+  });
 });
 
 userRouter.delete("/:id", async (req, res) => {
-  try {
-    const userId = parseInt(req.params.id);
-    const result = await userController.deleteUser(userId);
-    if (!!result.success) {
-      res.status(200).json(result);
-    } else {
-      res.status(500).json(result);
-    }
-  } catch (err) {
-    res.status(500).json(newResponse(false, err.message));
-  }
+  const userId = req.session.user.id;
+  const lookupUserId = parseInt(req.params.id);
+
+  userController.deleteUser(userId, lookupUserId).then((result) => {
+    res.status(result.errorCode).json(removeErrorCode(result));
+  });
 });

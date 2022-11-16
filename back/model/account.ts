@@ -7,7 +7,7 @@ import {
   ForeignKey,
 } from "sequelize";
 import { User } from "./user";
-import { dbconnection } from "../db-connection";
+import { sqlConnection } from "../db-connection";
 
 class Account extends Model<
   InferAttributes<Account>,
@@ -39,16 +39,11 @@ Account.init(
     updatedAt: DataTypes.DATE,
   },
   {
-    sequelize: dbconnection,
+    sequelize: sqlConnection,
     modelName: "account",
   }
 );
 
 // Account.belongsTo(User, { targetKey: "id" });
-
-const syncTable = async () => {
-  await Account.sync({ force: true });
-};
-syncTable();
 
 export { Account };

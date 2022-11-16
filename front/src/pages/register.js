@@ -18,8 +18,8 @@ import {
   getRegisterError,
   getRegisterMessage,
   getRegisterProgress,
-} from "../redux/selectors/user-selectors";
-import { userRegisterRequest } from "../redux/thunks/user-thunk";
+} from "../logic/selectors/user-selectors";
+import { userRegisterRequest } from "../logic/thunks/user-thunk";
 
 const Register = ({
   inProgress,
@@ -44,15 +44,9 @@ const Register = ({
         .email("Must be a valid email")
         .max(255)
         .required("Email is required"),
-      firstName: Yup.string()
-        .max(255)
-        .required("First name is required"),
-      lastName: Yup.string()
-        .max(255)
-        .required("Last name is required"),
-      password: Yup.string()
-        .max(255)
-        .required("Password is required"),
+      firstName: Yup.string().max(255).required("First name is required"),
+      lastName: Yup.string().max(255).required("Last name is required"),
+      password: Yup.string().max(255).required("Password is required"),
     }),
     onSubmit: () => {
       const data = {

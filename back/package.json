@@ -1,7 +1,7 @@
 {
   "name": "token-manager",
   "version": "1.0.0",
-  "description": "A sample DApp for creating and managing ERC20 and ERC721 Token",
+  "description": "A sample DApp for creating and managing ERC20 and ERC721 Tokens",
   "main": "app.js",
   "scripts": {
     "dev": "nodemon index.ts",

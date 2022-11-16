@@ -8,7 +8,7 @@ import {
 } from "sequelize";
 import { User } from "./user";
 import { Deploy } from "./deploy";
-import { dbconnection } from "../db-connection";
+import { sqlConnection } from "../db-connection";
 import { Account } from "./account";
 
 class Token extends Model<
@@ -59,7 +59,7 @@ Token.init(
     updatedAt: DataTypes.DATE,
   },
   {
-    sequelize: dbconnection,
+    sequelize: sqlConnection,
     modelName: "token",
   }
 );
@@ -69,10 +69,5 @@ Token.hasMany(Deploy, {
   foreignKey: "tokenId",
   as: "deploys",
 });
-
-const syncTable = async () => {
-  await Token.sync({ force: true });
-};
-syncTable();
 
 export { Token };

@@ -1,6 +1,5 @@
-import { useEffect } from "react";
-import { useLocation, useRoutes } from "react-router-dom";
-import PropTypes from "prop-types";
+import React from "react";
+import { useLocation } from "react-router-dom";
 import {
   Box,
   Button,
@@ -9,29 +8,24 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import { ChartBar as ChartBarIcon } from "../icons/chart-bar";
-import { Cog as CogIcon } from "../icons/cog";
-import React from "react";
-import { Selector as SelectorIcon } from "../icons/selector";
-import { User as UserIcon } from "../icons/user";
-import { Logo } from "./logo";
+import { Person, List, Settings } from "@mui/icons-material";
+
 import { NavItem } from "./nav-item";
 
 const items = [
   {
-    href: "/",
-    icon: <UserIcon fontSize="small" />,
+    href: "/profile",
+    icon: <Person fontSize="small" />,
     title: "Profile",
   },
   {
     href: "/tokens",
-    icon: <ChartBarIcon fontSize="small" />,
+    icon: <List fontSize="small" />,
     title: "Tokens",
   },
   {
     href: "/settings",
-    icon: <CogIcon fontSize="small" />,
+    icon: <Settings fontSize="small" />,
     title: "Settings",
   },
 ];
@@ -45,20 +39,6 @@ export const DashboardSidebar = (props) => {
     noSsr: false,
   });
 
-  useEffect(
-    () => {
-      // if (!router.) {
-      //   return;
-      // }
-
-      if (open) {
-        onClose();
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [location.pathname]
-  );
-
   const content = (
     <>
       <Box
@@ -69,21 +49,6 @@ export const DashboardSidebar = (props) => {
         }}
       >
         <div>
-          <Box sx={{ p: 3 }}>
-            {/* <NextLink
-              href="/"
-              passHref
-            >
-              <a>
-                <Logo
-                  sx={{
-                    height: 42,
-                    width: 42
-                  }}
-                />
-              </a>
-            </NextLink> */}
-          </Box>
           <Box sx={{ px: 2 }}>
             <Box
               sx={{
@@ -99,19 +64,12 @@ export const DashboardSidebar = (props) => {
             >
               <div>
                 <Typography color="inherit" variant="subtitle1">
-                  Acme Inc
+                  Account Name
                 </Typography>
                 <Typography color="neutral.400" variant="body2">
                   Your tier : Premium
                 </Typography>
               </div>
-              <SelectorIcon
-                sx={{
-                  color: "neutral.500",
-                  width: 14,
-                  height: 14,
-                }}
-              />
             </Box>
           </Box>
         </div>
@@ -173,9 +131,4 @@ export const DashboardSidebar = (props) => {
       {content}
     </Drawer>
   );
-};
-
-DashboardSidebar.propTypes = {
-  onClose: PropTypes.func,
-  open: PropTypes.bool,
 };

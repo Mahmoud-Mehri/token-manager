@@ -1,4 +1,4 @@
-import { newResponse } from "../model/general";
+import { successResponse, errorResponse, ErrorCode } from "../model/general";
 import { Server } from "../model/server";
 import { Token } from "../model/token";
 import { User } from "../model/user";
@@ -17,7 +17,11 @@ export class TokenController {
     this.nftController = new NonFungibleController();
   }
 
-  async findTokenById(_tokenId: number, _includeUser: boolean = false) {
+  async findTokenById(
+    _userId: number,
+    _tokenId: number,
+    _includeUser: boolean = false
+  ) {
     try {
       let token: Token;
       if (_includeUser)
@@ -27,13 +31,18 @@ export class TokenController {
           },
         });
       else token = await Token.findByPk(_tokenId);
-      if (token) {
-        return newResponse(true, token);
-      } else {
-        return newResponse(false, "Token Not Found !");
-      }
+
+      if (!token) return errorResponse(ErrorCode.NotFound, "Token Not Found !");
+
+      if (token.userId !== _userId)
+        return errorResponse(
+          ErrorCode.AccessDenied,
+          "You don't have access to this token"
+        );
+
+      return successResponse(token);
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
@@ -43,9 +52,10 @@ export class TokenController {
       if (_includeUser)
         tokens = await Token.findAll({ include: { model: User } });
       else tokens = await Token.findAll({});
-      return newResponse(true, tokens);
+
+      return successResponse(tokens);
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
@@ -56,42 +66,58 @@ export class TokenController {
           userId: _userId,
         },
       });
-      return newResponse(true, tokens);
+
+      return successResponse(tokens);
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
   async newToken(_userId: number, _tokenInfo: any) {
     try {
       const token = new Token(_tokenInfo);
-      await token.save();
-      return newResponse(true, token);
+      const newToken = await token.save();
+
+      return successResponse(newToken);
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
-  async updateToken(_tokenId: number, _tokenInfo: any) {
+  async updateToken(_userId: number, _tokenId: number, _tokenInfo: any) {
     try {
       const token = await Token.findByPk(_tokenId);
-      if (!token) throw new Error("Token Not Found");
+      if (!token) return errorResponse(ErrorCode.NotFound, "Token Not Found");
+
+      if (token.userId !== _userId)
+        return errorResponse(
+          ErrorCode.AccessDenied,
+          "You don't have access to this token"
+        );
 
       token.set(_tokenInfo);
-      await token.save();
-      return newResponse(true, token);
+      const newToken = await token.save();
+
+      return successResponse(newToken);
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
-  async deleteToken(_tokenId: number) {
+  async deleteToken(_userId: number, _tokenId: number) {
     try {
-      if (await Token.destroy({ where: { id: _tokenId } }))
-        return newResponse(true, "Token deleted successfully");
-      else return newResponse(false, "Token not exists!");
+      const token = await Token.findByPk(_tokenId);
+      if (!token) return errorResponse(ErrorCode.NotFound, "Token Not Found!");
+      if (token.userId !== _userId)
+        return errorResponse(
+          ErrorCode.AccessDenied,
+          "You don't have access to this token!"
+        );
+
+      await token.destroy();
+      return successResponse({}, "Token Deleted Successfully");
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
@@ -139,6 +165,7 @@ export class TokenController {
         accountAddr: _accountAddr,
         contractAddr: "",
       };
+
       const deployResult = await this.ftController.deployNewToken(
         {
           name: token.title,
@@ -149,16 +176,16 @@ export class TokenController {
         false
       );
 
-      return newResponse(true, deployResult);
+      return deployResult;
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
   async setTokenOptions(_tokenId: number, { mintable, burnable, pausable }) {
     try {
       const token = await Token.findByPk(_tokenId);
-      if (!token) return newResponse(false, "Token not found!");
+      if (!token) return errorResponse(ErrorCode.NotFound, "Token Not Found!");
       else {
         if (token.tokenType === "FT") {
           const promise = this.ftController.setOptions(
@@ -175,7 +202,7 @@ export class TokenController {
         }
       }
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 

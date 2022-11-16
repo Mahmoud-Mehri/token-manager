@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import {
   Avatar,
   Box,
@@ -9,8 +8,8 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import { Assignment as EmptyIcon } from "@mui/icons-material/Assignment";
-import { Settings as ManageIcon } from "@mui/icons-material/Settings";
+import * as EmptyIcon from "@mui/icons-material/Assignment";
+import * as ManageIcon from "@mui/icons-material/Settings";
 
 export const TokenCard = ({ token, ...rest }) => (
   <Card
@@ -84,7 +83,3 @@ export const TokenCard = ({ token, ...rest }) => (
     </Box>
   </Card>
 );
-
-TokenCard.propTypes = {
-  token: PropTypes.object.isRequired,
-};

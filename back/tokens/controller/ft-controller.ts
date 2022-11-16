@@ -1,6 +1,11 @@
 import Web3 from "web3";
 import HDWalletProvider from "@truffle/hdwallet-provider";
-import { newResponse } from "../../model/general";
+import {
+  successResponse,
+  errorResponse,
+  ErrorCode,
+  ControllerResponse,
+} from "../../model/general";
 import { HttpProvider } from "web3-core/types/index";
 import { AbiItem } from "web3-utils";
 import { Contract } from "web3-eth-contract/types/index";
@@ -66,7 +71,7 @@ export class FungibleTokenController {
     deployOptions: deployConfig,
     waitForConfirmation: boolean = false
   ) {
-    return new Promise((resolve, reject) => {
+    return new Promise<ControllerResponse>((resolve, reject) => {
       try {
         initialize({
           providerUrl: deployOptions.providerUrl,
@@ -80,21 +85,21 @@ export class FungibleTokenController {
             from: `${account}`,
           })
           .on("error", function (err) {
-            reject(newResponse(false, err.message));
+            reject(errorResponse(ErrorCode.Exception, err.message));
           })
           .on("transactionHash", function (tranHash) {})
           .on("receipt", function (receipt) {
             if (!waitForConfirmation) {
-              resolve(newResponse(true, receipt));
+              resolve(successResponse(receipt));
             }
           })
           .on("confirmation", function (confirmationNumber, receipt) {
             if (waitForConfirmation) {
-              resolve(newResponse(true, { confirmationNumber, receipt }));
+              resolve(successResponse({ confirmationNumber, receipt }));
             }
           });
       } catch (err) {
-        reject(newResponse(false, err.message));
+        return errorResponse(ErrorCode.Exception, err.message);
       }
     });
   }
@@ -113,9 +118,10 @@ export class FungibleTokenController {
       await contract.methods.setOptions([mintable, burnable, pausable]).send({
         from: `${account}`,
       });
-      return newResponse(true, "");
+
+      return successResponse({});
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
@@ -137,9 +143,9 @@ export class FungibleTokenController {
         });
       }
 
-      return newResponse(true, "");
+      return successResponse({});
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
@@ -161,9 +167,9 @@ export class FungibleTokenController {
         });
       }
 
-      return newResponse(true, "");
+      return successResponse({});
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
@@ -185,9 +191,9 @@ export class FungibleTokenController {
         });
       }
 
-      return newResponse(true, "");
+      return successResponse({});
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
@@ -207,9 +213,9 @@ export class FungibleTokenController {
         throw { message: "Invalid Address" };
       }
 
-      return newResponse(true, "");
+      return successResponse({});
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 }

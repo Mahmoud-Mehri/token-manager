@@ -7,15 +7,19 @@ import cors from "cors";
 import helmet from "helmet";
 import RateLimit from "express-rate-limit";
 import * as config from "./config.json";
+import { syncTables } from "./model/sync-tables";
 
 // Routes
 import { authRouter } from "./routes/auth-routes";
+import { serverRouter } from "./routes/server-routes";
 import { userRouter } from "./routes/user-routes";
 import { tokenRouter } from "./routes/token-routes";
 
 // Middlewares
 import { authenticator } from "./middleware/authenticator";
 import { handle404 } from "./middleware/error-handler";
+
+syncTables();
 
 const redisClient = redis.createClient({
   legacyMode: true,
@@ -53,7 +57,6 @@ app.use(
   })
 );
 app.use(cors());
-
 app.use(helmet());
 
 const rateLimit = RateLimit({
@@ -64,10 +67,13 @@ app.use(rateLimit);
 
 app.use("/", authRouter);
 
+app.use("/server", authenticator);
+app.use("/server", serverRouter);
+
 app.use("/users", authenticator);
 app.use("/users", userRouter);
 
-// app.use("/tokens", authenticator);
+app.use("/tokens", authenticator);
 app.use("/tokens", tokenRouter);
 
 app.use(handle404);

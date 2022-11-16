@@ -1,89 +1,72 @@
 import { Router } from "express";
 import { TokenController } from "../controller/token-controller";
-import { newResponse } from "../model/general";
+import { ErrorCode, errorResponse, removeErrorCode } from "../model/general";
 
 export const tokenRouter = Router();
 const tokenController = new TokenController();
 
+// Get All Tokens associated by User
 tokenRouter.get("/", async (req, res) => {
   const includeUsers = req.query.includeUsers
     ? req.query.includeUsers == "true"
     : false;
-  try {
-    const result = await tokenController.allTokens(includeUsers);
-    if (!!result.success) {
-      res.status(200).json(result);
-    } else {
-      res.status(500).json(result);
-    }
-  } catch (err) {
-    res.status(500).json(newResponse(false, err.message));
-  }
+
+  const userId = req.session.user.id;
+
+  tokenController.allTokens(includeUsers).then((result) => {
+    res.status(result.errorCode).json(removeErrorCode(result));
+  });
 });
 
 tokenRouter.get("/:id", async (req, res) => {
-  try {
-    const tokenId = parseInt(req.params.id);
-    const result = await tokenController.findTokenById(tokenId);
-    if (!!result.success) {
-      res.status(200).json(result);
-    } else {
-      res.status(500).json(result);
-    }
-  } catch (err) {
-    res.status(500).json(newResponse(false, err.message));
-  }
+  const tokenId = parseInt(req.params.id);
+  const userId = req.session.user.id;
+
+  tokenController.findTokenById(userId, tokenId).then((result) => {
+    res.status(result.errorCode).json(removeErrorCode(result));
+  });
 });
 
 tokenRouter.post("/", async (req, res) => {
-  try {
-    if (!req.body.userId) {
-      res.status(400).json(newResponse(false, "The field `title` is required"));
-    } else if (!req.body.title) {
-      res.status(400).json(newResponse(false, "The field `title` is required"));
-    } else if (!req.body.symbol) {
-      res
-        .status(400)
-        .json(newResponse(false, "The field `symbol` is required"));
-    } else {
-      const result = await tokenController.newToken(req.body.userId, req.body);
-      if (!!result.success) {
-        res.status(200).json(result);
-      } else {
-        res.status(500).json(result);
-      }
-    }
-  } catch (err) {
-    res.status(500).json(newResponse(false, err.message));
+  const userId = req.session.user.id;
+
+  if (!req.body.title) {
+    const result = errorResponse(
+      ErrorCode.BadRequest,
+      "The field `title` is required"
+    );
+    return res.status(result.errorCode).json(removeErrorCode(result));
   }
+
+  if (!req.body.symbol) {
+    const result = errorResponse(
+      ErrorCode.BadRequest,
+      "The field `symbol` is required"
+    );
+    return res.status(result.errorCode).json(removeErrorCode(result));
+  }
+
+  tokenController.newToken(userId, req.body).then((result) => {
+    res.status(result.errorCode).json(removeErrorCode(result));
+  });
 });
 
 tokenRouter.put("/:id", async (req, res) => {
-  try {
-    const tokenId = parseInt(req.params.id);
-    const result = await tokenController.updateToken(tokenId, req.body);
-    if (!!result.success) {
-      res.status(200).json(result);
-    } else {
-      res.status(500).json(result);
-    }
-  } catch (err) {
-    res.status(500).json(newResponse(false, err.message));
-  }
+  const tokenId = parseInt(req.params.id);
+  const userId = req.session.user.id;
+
+  tokenController.updateToken(userId, tokenId, req.body).then((result) => {
+    res.status(result.errorCode).json(removeErrorCode(result));
+  });
 });
 
 tokenRouter.delete("/:id", async (req, res) => {
-  try {
-    const tokenId = parseInt(req.params.id);
-    const result = await tokenController.deleteToken(tokenId);
-    if (!!result.success) {
-      res.status(200).json(result);
-    } else {
-      res.status(500).json(result);
-    }
-  } catch (err) {
-    res.status(500).json(newResponse(false, err.message));
-  }
+  const tokenId = parseInt(req.params.id);
+  const userId = req.session.user.id;
+
+  tokenController.deleteToken(userId, tokenId).then((result) => {
+    res.status(result.errorCode).json(removeErrorCode(result));
+  });
 });
 
 // tokenRouter.get("/:id/accounts", (req, res) => {

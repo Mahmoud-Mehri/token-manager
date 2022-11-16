@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Box,
   Button,
@@ -8,69 +9,40 @@ import {
   Divider,
   FormControlLabel,
   Grid,
-  Typography
-} from '@mui/material';
+  Typography,
+} from "@mui/material";
 
 export const SettingsNotifications = (props) => (
   <form {...props}>
     <Card>
-      <CardHeader
-        subheader="Manage the notifications"
-        title="Notifications"
-      />
+      <CardHeader subheader="Manage the notifications" title="Notifications" />
       <Divider />
       <CardContent>
-        <Grid
-          container
-          spacing={6}
-          wrap="wrap"
-        >
+        <Grid container spacing={6} wrap="wrap">
           <Grid
             item
             md={4}
             sm={6}
             sx={{
-              display: 'flex',
-              flexDirection: 'column'
+              display: "flex",
+              flexDirection: "column",
             }}
             xs={12}
           >
-            <Typography
-              color="textPrimary"
-              gutterBottom
-              variant="h6"
-            >
+            <Typography color="textPrimary" gutterBottom variant="h6">
               Notifications
             </Typography>
             <FormControlLabel
-              control={(
-                <Checkbox
-                  color="primary"
-                  defaultChecked
-                />
-              )}
+              control={<Checkbox color="primary" defaultChecked />}
               label="Email"
             />
             <FormControlLabel
-              control={(
-                <Checkbox
-                  color="primary"
-                  defaultChecked
-                />
-              )}
+              control={<Checkbox color="primary" defaultChecked />}
               label="Push Notifications"
             />
+            <FormControlLabel control={<Checkbox />} label="Text Messages" />
             <FormControlLabel
-              control={<Checkbox />}
-              label="Text Messages"
-            />
-            <FormControlLabel
-              control={(
-                <Checkbox
-                  color="primary"
-                  defaultChecked
-                />
-              )}
+              control={<Checkbox color="primary" defaultChecked />}
               label="Phone calls"
             />
           </Grid>
@@ -79,25 +51,16 @@ export const SettingsNotifications = (props) => (
             md={4}
             sm={6}
             sx={{
-              display: 'flex',
-              flexDirection: 'column'
+              display: "flex",
+              flexDirection: "column",
             }}
             xs={12}
           >
-            <Typography
-              color="textPrimary"
-              gutterBottom
-              variant="h6"
-            >
+            <Typography color="textPrimary" gutterBottom variant="h6">
               Messages
             </Typography>
             <FormControlLabel
-              control={(
-                <Checkbox
-                  color="primary"
-                  defaultChecked
-                />
-              )}
+              control={<Checkbox color="primary" defaultChecked />}
               label="Email"
             />
             <FormControlLabel
@@ -105,12 +68,7 @@ export const SettingsNotifications = (props) => (
               label="Push Notifications"
             />
             <FormControlLabel
-              control={(
-                <Checkbox
-                  color="primary"
-                  defaultChecked
-                />
-              )}
+              control={<Checkbox color="primary" defaultChecked />}
               label="Phone calls"
             />
           </Grid>
@@ -119,15 +77,12 @@ export const SettingsNotifications = (props) => (
       <Divider />
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          p: 2
+          display: "flex",
+          justifyContent: "flex-end",
+          p: 2,
         }}
       >
-        <Button
-          color="primary"
-          variant="contained"
-        >
+        <Button color="primary" variant="contained">
           Save
         </Button>
       </Box>

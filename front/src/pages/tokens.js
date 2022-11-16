@@ -3,15 +3,15 @@ import { connect } from "react-redux";
 import { Box, Container, Grid } from "@mui/material";
 import { TokenCard } from "../components/token/token-card";
 import NewToken from "../components/token/token-new";
-import { TokenListToolbar } from "../components/token/token-list-toolbar";
+import { TokensHeader } from "../components/token/tokens-header";
 import { DashboardLayout } from "../components/dashboard-layout";
 import {
   getTokenList,
   getTokenListError,
   getTokenListLoading,
   getTokenListMessage,
-} from "../redux/selectors/token-selectors";
-import { tokenListRequest } from "../redux/thunks/token-thunk";
+} from "../logic/selectors/token-selectors";
+import { tokenListRequest } from "../logic/thunks/token-thunk";
 
 const Tokens = ({
   loading,
@@ -27,14 +27,13 @@ const Tokens = ({
     <>
       <title>Tokens - Token Manager</title>
       <Box
-        component="main"
         sx={{
           flexGrow: 1,
-          py: 8,
+          py: 1,
         }}
       >
         <Container maxWidth={false}>
-          <TokenListToolbar />
+          <TokensHeader />
           <Box sx={{ pt: 3 }}>
             <Grid container spacing={3}>
               {tokens.map((token) => (

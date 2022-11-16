@@ -4,20 +4,19 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
   MenuItem,
-  Select,
   TextField,
   Button,
   Typography,
   CircularProgress,
+  Box,
 } from "@mui/material";
 import {
   getCreatedToken,
   getCreateTokenError,
   getCreateTokenMessage,
   getCreateTokenProgress,
-} from "../../redux/selectors/token-selectors";
-import { createTokenRequest } from "../../redux/thunks/token-thunk";
-import { Box } from "@mui/system";
+} from "../../logic/selectors/token-selectors";
+import { createTokenRequest } from "../../logic/thunks/token-thunk";
 
 const NewToken = ({
   inProgress,
@@ -27,10 +26,9 @@ const NewToken = ({
   createNewToken,
   ...props
 }) => {
-  const tokenTypes = ["FT", "NFT"];
   const formik = useFormik({
     initialValues: {
-      type: tokenTypes[0],
+      type: 1,
       title: "",
       symbol: "",
       icon: "",
@@ -38,14 +36,10 @@ const NewToken = ({
       description: "",
     },
     validationSchema: Yup.object({
-      type: Yup.string().required("Token Type is required"),
+      type: Yup.number().min(1).max(2).required("Token Type is required"),
       title: Yup.string().required("Title is required"),
-      symbol: Yup.string()
-        .max(4)
-        .required("Symbol in required"),
-      icon: Yup.string()
-        .url("Icon file url is not valid")
-        .notRequired(),
+      symbol: Yup.string().max(4).required("Symbol in required"),
+      icon: Yup.string().url("Icon file url is not valid").notRequired(),
       media: Yup.string().url("Media Url is not valid"),
       description: Yup.string().notRequired(),
     }),
@@ -73,15 +67,19 @@ const NewToken = ({
   return (
     <>
       <form onSubmit={formik.handleSubmit}>
-        <Select
+        <TextField
+          select
+          name="type"
           label="Token Type"
           fullWidth
           size="small"
+          margin="dense"
           value={formik.values.type}
+          onChange={formik.handleChange}
         >
-          <MenuItem value="FT">Fungible Token</MenuItem>
-          <MenuItem value="NFT">Non-Fungible Token</MenuItem>
-        </Select>
+          <MenuItem value={1}>Fungible Token</MenuItem>
+          <MenuItem value={2}>Non-Fungible Token</MenuItem>
+        </TextField>
         <TextField
           type="text"
           name="title"
@@ -152,17 +150,8 @@ const NewToken = ({
           variant="outlined"
           margin="dense"
         ></TextField>
-        <Box>
+        <Box display="flex" justifyContent="space-between" padding={1}>
           <Box>{inProgress ? Progress : Message}</Box>
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={() => {
-              formik.resetForm();
-            }}
-          >
-            Clear Form
-          </Button>
           <Button color="primary" type="submit" variant="contained">
             Create Token
           </Button>

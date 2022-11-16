@@ -1,73 +1,76 @@
 import { Server } from "../model/server";
-import { newResponse } from "../model/general";
+import { successResponse, errorResponse, ErrorCode } from "../model/general";
 
 export class ServerController {
   constructor() {}
 
-  async findServerById(_serverId: number) {
+  async findServerById(_userId: number, _serverId: number) {
     try {
       const server = await Server.findByPk(_serverId);
-      if (server) {
-        return newResponse(true, server);
-      } else {
-        throw new Error("Server Not Found!");
-      }
+      if (!server)
+        return errorResponse(ErrorCode.NotFound, "Server Not Found!");
+      return successResponse(server);
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
-  async findServerByTitle(_title: string) {
+  async findServerByTitle(_userId: number, _title: string) {
     try {
       const server = await Server.findOne({
         where: {
           title: _title,
         },
       });
-      if (server) return newResponse(true, server);
-      throw new Error("Server Not Found");
+
+      if (!server) return errorResponse(ErrorCode.NotFound, "Server Not Found");
+
+      return successResponse(server);
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
-  async allServers() {
+  async allServers(_userId: number) {
     try {
       const servers = await Server.findAll({});
-      return newResponse(true, servers);
+      return successResponse(servers);
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
-  async newServer(_serverInfo: any) {
+  async newServer(_userId: number, _serverInfo: any) {
     try {
       const server = new Server(_serverInfo);
       await server.save();
-      return newResponse(true, server);
+      return successResponse(server);
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
-  async updateServer(_serverId: number, _serverInfo: any) {
+  async updateServer(_userId: number, _serverId: number, _serverInfo: any) {
     try {
       const server = await Server.findByPk(_serverId);
-      if (!server) throw new Error("Server Not Found");
+      if (!server)
+        return errorResponse(ErrorCode.NotFound, "Server Not Found!");
       await server.update(_serverInfo);
-      return newResponse(true, server);
+
+      return successResponse(server);
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
-  async deleteServer(_serverId: number) {
+  async deleteServer(_userId: number, _serverId: number) {
     try {
       const rows = await Server.destroy({ where: { id: _serverId } });
-      if (rows > 0) return newResponse(true, "Server deleted successfully");
-      throw new Error("Server Not found");
+      if (rows == 0) errorResponse(ErrorCode.NotFound, "Server Not Found!");
+
+      return successResponse({}, "Server Deleted Successfully");
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 }

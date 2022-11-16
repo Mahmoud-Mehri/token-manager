@@ -1,5 +1,5 @@
 import React from "react";
-import { Router, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import { Box, Button, ListItem } from "@mui/material";
 
@@ -7,6 +7,7 @@ export const NavItem = (props) => {
   const { href, icon, title, ...others } = props;
   const location = useLocation();
   const active = href ? location.pathname === href : false;
+  const navigate = useNavigate();
 
   return (
     <ListItem
@@ -19,10 +20,6 @@ export const NavItem = (props) => {
       }}
       {...others}
     >
-      {/* <NextLink
-        href={href}
-        passHref
-      > */}
       <Button
         component="a"
         startIcon={icon}
@@ -44,10 +41,12 @@ export const NavItem = (props) => {
             backgroundColor: "rgba(255,255,255, 0.08)",
           },
         }}
+        onClick={() => {
+          navigate(href);
+        }}
       >
         <Box sx={{ flexGrow: 1 }}>{title}</Box>
       </Button>
-      {/* </NextLink> */}
     </ListItem>
   );
 };

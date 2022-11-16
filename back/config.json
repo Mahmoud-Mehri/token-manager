@@ -1,10 +1,9 @@
 {
   "cluster_mode": false,
   "auth": {
-    "jwtSecret": "JWT_SECRET_KEY",
     "hashSaltRound": 10,
     "expireTimeout": 300,
-    "sessionSecret": "..."
+    "sessionSecret": "SESSION_SECRET_KEY"
   },
   "redis": {
     "host": "localhost",
@@ -15,6 +14,8 @@
     "port": 37017
   },
   "postgres": {
+    "host": "localhost",
+    "port": 5432,
     "logging": false
   }
 }

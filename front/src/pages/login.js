@@ -12,15 +12,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Facebook as FacebookIcon } from "../icons/facebook";
-import { Google as GoogleIcon } from "../icons/google";
 import {
   getLoginProgress,
   getLoginError,
   getLoginMessage,
   getLoggedInUser,
-} from "../redux/selectors/user-selectors";
-import { userLoginRequest } from "../redux/thunks/user-thunk";
+} from "../logic/selectors/user-selectors";
+import { userLoginRequest } from "../logic/thunks/user-thunk";
 
 const Login = ({
   inProgress,
@@ -43,9 +41,7 @@ const Login = ({
         .email("Email address is not valid")
         .max(255)
         .required("Email is required"),
-      password: Yup.string()
-        .max(255)
-        .required("Password is required"),
+      password: Yup.string().max(255).required("Password is required"),
     }),
     onSubmit: () => {
       const data = {

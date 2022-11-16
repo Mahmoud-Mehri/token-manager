@@ -1,8 +1,5 @@
 import axios from "axios";
-import {
-  ROUTE_USER_REGISTER,
-  ROUTE_USER_LOGIN,
-} from "../constants/user-constants";
+import { ROUTE_USER_REGISTER, ROUTE_USER_LOGIN } from "../constants";
 import {
   userRegisterProgress,
   userRegisterSuccess,

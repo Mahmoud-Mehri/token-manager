@@ -1,31 +1,16 @@
-import { NextFunction, Request, Response } from "express";
-import { newResponse } from "../model/general";
-import { AuthController } from "../controller/auth-controller";
-import { User } from "../model/user";
+import { Request, Response, NextFunction } from "express";
+import { ErrorCode } from "../model/general";
+import * as config from "../config.json";
 
-export function authenticator(req: Request, res: Response, next: NextFunction) {
-  if (req.session && req.session.user) {
-    User.findOne({ where: { email: req.session.user.getDataValue("email") } })
-      .then((user) => {
-        if (user) {
-          delete user.password;
-          req.session.user = user;
-          next();
-        } else {
-          res.status(401).json(newResponse(false, "Authorization Failed!"));
-        }
-      })
-      .catch((err) => {
-        res
-          .status(401)
-          .json(
-            newResponse(
-              false,
-              `Authorization failed with error:\n${err.message}`
-            )
-          );
-      });
-  } else {
-    res.status(401).json(newResponse(false, "Authorization Failed!"));
-  }
-}
+export const authenticator = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.session.user || req.session.user.id == 0)
+    return res
+      .status(ErrorCode.AuthFailed)
+      .json({ success: false, data: null, message: "Authentication Failed" });
+
+  next();
+};

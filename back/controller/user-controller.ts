@@ -1,7 +1,7 @@
 import { Token } from "../model/token";
 import { Account } from "../model/account";
 import { Deploy } from "../model/deploy";
-import { newResponse } from "../model/general";
+import { successResponse, errorResponse, ErrorCode } from "../model/general";
 import { User } from "../model/user";
 
 export class UserController {
@@ -9,11 +9,12 @@ export class UserController {
 
   async findUserById(
     _userId: number,
+    _lookupUserId: number,
     includeAccounts: boolean = false,
     includeTokens: boolean = false
   ) {
     try {
-      const user = await User.findByPk(_userId, {
+      const user = await User.findByPk(_lookupUserId, {
         include:
           includeAccounts || includeTokens
             ? [
@@ -24,14 +25,16 @@ export class UserController {
               ]
             : [],
       });
-      if (user) return newResponse(true, user);
-      else throw new Error("User Not Found");
+      if (!user) return errorResponse(ErrorCode.NotFound, "User Not found!");
+
+      return successResponse(user);
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
   async findUserByEmail(
+    _userId: number,
     _email: string,
     includeAccounts: boolean = false,
     includeTokens: boolean = false
@@ -51,14 +54,16 @@ export class UserController {
               ]
             : [],
       });
-      if (user) return newResponse(true, user);
-      throw new Error("User Not Found");
+      if (!user) return errorResponse(ErrorCode.NotFound, "User Not found!");
+
+      return successResponse(user);
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
   async allUsers(
+    _userId: number,
     includeAccounts: boolean = false,
     includeTokens: boolean = false
   ) {
@@ -74,58 +79,60 @@ export class UserController {
               ]
             : [],
       });
-      return newResponse(true, users);
+      return successResponse(users);
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
-  async getUserAccounts(_userId: number) {
+  async getUserAccounts(_userId: number, _lookupUserId: number) {
     // TO DO
     try {
       throw { message: "Under Development !" };
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
-  async getUserTokens(_userId: number) {
+  async getUserTokens(_userId: number, _lookupUserId: number) {
     // TO DO
     try {
       throw { message: "Under Development !" };
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
-  async newUser(_userInfo: any) {
+  async newUser(_userId: number, _userInfo: any) {
     try {
       const user = new User(_userInfo);
       await user.save();
-      return newResponse(true, user);
+
+      return successResponse(user);
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
-  async updateUser(_userId: number, _userInfo: any) {
+  async updateUser(_userId: number, _lookupUserId: number, _userInfo: any) {
     try {
-      const user = await User.findByPk(_userId);
-      if (!user) throw new Error("User Not Found");
-      await user.update(_userInfo);
-      return newResponse(true, user);
+      const user = await User.findByPk(_lookupUserId);
+      if (!user) return errorResponse(ErrorCode.NotFound, "User Not Found!");
+
+      const newUser = await user.update(_userInfo);
+      return successResponse(newUser);
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
-  async deleteUser(_userId: number) {
+  async deleteUser(_userId: number, _lookupUserId: number) {
     try {
-      const rows = await User.destroy({ where: { id: _userId } });
-      if (rows > 0) return newResponse(true, "User deleted successfully");
+      const rows = await User.destroy({ where: { id: _lookupUserId } });
+      if (rows > 0) return successResponse({}, "User deleted successfully");
       throw new Error("User Not found");
     } catch (err) {
-      return newResponse(false, err.message);
+      return errorResponse(ErrorCode.Exception, err.message);
     }
   }
 
@@ -135,6 +142,8 @@ export class UserController {
     accountPrivateKey: string = ""
   ) {
     try {
-    } catch (err) {}
+    } catch (err) {
+      return errorResponse(ErrorCode.Exception, err.message);
+    }
   }
 }

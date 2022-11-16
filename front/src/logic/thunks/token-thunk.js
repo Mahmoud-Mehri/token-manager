@@ -7,10 +7,7 @@ import {
   createTokenSuccess,
   createTokenFailure,
 } from "../actions/token-actions";
-import {
-  Route_TOKEN_CREATE,
-  ROUTE_TOKEN_LIST,
-} from "../constants/token-constants";
+import { Route_TOKEN_CREATE, ROUTE_TOKEN_LIST } from "../constants";
 
 export const tokenListRequest = () => async (dispatch) => {
   try {
