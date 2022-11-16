@@ -1,28 +1,13 @@
 import React from "react";
-import { connect } from "react-redux";
-import { Box, Container, Grid } from "@mui/material";
-import { TokenCard } from "../components/token/token-card";
+import { Box, Collapse } from "@mui/material";
+import { Close } from "@mui/icons-material";
 import NewToken from "../components/token/token-new";
 import { TokensHeader } from "../components/token/tokens-header";
-import { DashboardLayout } from "../components/dashboard-layout";
-import {
-  getTokenList,
-  getTokenListError,
-  getTokenListLoading,
-  getTokenListMessage,
-} from "../logic/selectors/token-selectors";
-import { tokenListRequest } from "../logic/thunks/token-thunk";
+import TokenList from "../components/token/token-list";
 
-const Tokens = ({
-  loading,
-  tokens,
-  error,
-  message,
-  loadTokenList,
-  ...props
-}) => {
-  if (loading) return <p1>Loading ...</p1>;
-  if (error) return <pre>{JSON.stringify(error, 2, null)}</pre>;
+const Tokens = ({ ...props }) => {
+  const [newToken, setNewToken] = useState(false);
+
   return (
     <>
       <title>Tokens - Token Manager</title>
@@ -32,41 +17,43 @@ const Tokens = ({
           py: 1,
         }}
       >
-        <Container maxWidth={false}>
-          <TokensHeader />
-          <Box sx={{ pt: 3 }}>
-            <Grid container spacing={3}>
-              {tokens.map((token) => (
-                <Grid item key={token.id} lg={4} md={6} xs={12}>
-                  <TokenCard token={token} />
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
+        <TokensHeader />
+        <Collapse in={newToken}>
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "center",
-              pt: 3,
+              borderColor: "lightgray",
+              borderWidth: 0.5,
+              borderStyle: "solid",
+              borderRadius: 3,
             }}
-          ></Box>
-        </Container>
+          >
+            <Box display="flex" justifyContent="space-between" margin={3}>
+              <Box display="flex" alignItems="center">
+                <Typography variant="h5">Create New token</Typography>
+              </Box>
+              <Box display="flex" alignItems="center">
+                <IconButton
+                  onClick={() => {
+                    setNewToken(false);
+                  }}
+                >
+                  <Close />
+                </IconButton>
+              </Box>
+            </Box>
+            <Box
+              sx={{
+                margin: 3,
+              }}
+            >
+              <NewToken />
+            </Box>
+          </Box>
+        </Collapse>
+        <TokenList />
       </Box>
     </>
   );
 };
 
-Tokens.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
-
-const mapStateToProps = (state) => ({
-  loading: getTokenListLoading(state),
-  tokens: getTokenList(state),
-  error: getTokenListError(state),
-  message: getTokenListMessage(state),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  loadTokenList: (data) => dispatch(tokenListRequest(data)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Tokens);
+export default Tokens;

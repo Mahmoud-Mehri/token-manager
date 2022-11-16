@@ -1,10 +1,9 @@
 import React from "react";
 import { Box, Container, Typography } from "@mui/material";
-import { DashboardLayout } from "../components/dashboard-layout";
 import { SettingsNotifications } from "../components/settings/settings-notifications";
 import { SettingsPassword } from "../components/settings/settings-password";
 
-const Settings = () => (
+const Settings = ({ ...props }) => (
   <>
     <Box
       component="main"
@@ -25,7 +24,5 @@ const Settings = () => (
     </Box>
   </>
 );
-
-Settings.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Settings;
