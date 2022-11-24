@@ -14,12 +14,14 @@ import { authRouter } from "./routes/auth-routes";
 import { serverRouter } from "./routes/server-routes";
 import { userRouter } from "./routes/user-routes";
 import { tokenRouter } from "./routes/token-routes";
+import { accountRouter } from "./routes/account-routes";
+import { deployRouter } from "./routes/deploy-routes";
 
 // Middlewares
 import { authenticator } from "./middleware/authenticator";
 import { handle404 } from "./middleware/error-handler";
 
-syncTables();
+// syncTables();
 
 const redisClient = redis.createClient({
   legacyMode: true,
@@ -75,6 +77,12 @@ app.use("/users", userRouter);
 
 app.use("/tokens", authenticator);
 app.use("/tokens", tokenRouter);
+
+app.use("/accounts", authenticator);
+app.use("/accounts", accountRouter);
+
+app.use("/deploy", authenticator);
+app.use("/deploy", deployRouter);
 
 app.use(handle404);
 
