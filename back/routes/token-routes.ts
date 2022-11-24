@@ -7,13 +7,13 @@ const tokenController = new TokenController();
 
 // Get All Tokens associated by User
 tokenRouter.get("/", async (req, res) => {
-  const includeUsers = req.query.includeUsers
-    ? req.query.includeUsers == "true"
-    : false;
+  // const includeUsers = req.query.includeUsers
+  //   ? req.query.includeUsers == "true"
+  //   : false;
 
   const userId = req.session.user.id;
 
-  tokenController.allTokens(includeUsers).then((result) => {
+  tokenController.getUserTokens(userId).then((result) => {
     res.status(result.errorCode).json(removeErrorCode(result));
   });
 });
@@ -23,6 +23,15 @@ tokenRouter.get("/:id", async (req, res) => {
   const userId = req.session.user.id;
 
   tokenController.findTokenById(userId, tokenId).then((result) => {
+    res.status(result.errorCode).json(removeErrorCode(result));
+  });
+});
+
+tokenRouter.get("/:id/deploys", async (req, res) => {
+  const userId = req.session.user.id;
+  const tokenId = parseInt(req.params.id);
+
+  tokenController.getTokenDeploys(userId, tokenId).then((result) => {
     res.status(result.errorCode).json(removeErrorCode(result));
   });
 });
@@ -68,20 +77,3 @@ tokenRouter.delete("/:id", async (req, res) => {
     res.status(result.errorCode).json(removeErrorCode(result));
   });
 });
-
-// tokenRouter.get("/:id/accounts", (req, res) => {
-//   const tokenId = req.params.id;
-//   tokenController
-//     .getTokenUser(tokenId)
-//     .then((users) => res.json(newResponse(true, users)))
-//     .catch((err) => res.json(newResponse(false, err.message)));
-// });
-
-// tokenRouter.post("/:id/accounts", (req, res) => {
-//   const tokenId = req.params.id;
-//   const userId = req.body.userId;
-//   tokenController
-//     .addAccountToToken(tokenId, userId)
-//     .then((message) => res.json(newResponse(true, message)))
-//     .catch((err) => res.json(newResponse(false, err.message)));
-// });
