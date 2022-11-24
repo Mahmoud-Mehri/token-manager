@@ -1,0 +1,30 @@
+{
+  "cluster_mode": false,
+  "deploy": {
+    "mnomics": "",
+    "privateKey": "a93c4e3745bc1451cf2353ac0a10ccbe9724cf8898f19aebe6e8eda19e457700",
+    "apiUrls": {
+      "mainnet": "https://mainnet.infura.io/v3/d9153f9f351946c1841e246d19825eb6",
+      "gorli": "https://goerli.infura.io/v3/d9153f9f351946c1841e246d19825eb6",
+      "sepolia": "https://sepolia.infura.io/v3/d9153f9f351946c1841e246d19825eb6"
+    }
+  },
+  "auth": {
+    "hashSaltRound": 10,
+    "expireTimeout": 300,
+    "sessionSecret": "SESSION_SECRET_KEY"
+  },
+  "redis": {
+    "host": "localhost",
+    "port": 6380
+  },
+  "mongodb": {
+    "host": "localhost",
+    "port": 37017
+  },
+  "postgres": {
+    "host": "localhost",
+    "port": 5432,
+    "logging": false
+  }
+}
