@@ -23,7 +23,6 @@ contract FungibleToken is ERC777 {
     constructor(
         string memory name_,
         string memory symbol_,
-        uint256 initialSupply_,
         address[] memory defaultOperators_
     ) ERC777(name_, symbol_, defaultOperators_) {
         _owner = _msgSender();
@@ -33,7 +32,7 @@ contract FungibleToken is ERC777 {
         _burnable = true;
         _pausable = true;
 
-        _mint(_owner, initialSupply_, "", "");
+        // _mint(_msgSender(), initialSupply_, "", "");
     }
 
     modifier onlyOwner() {
@@ -80,6 +79,10 @@ contract FungibleToken is ERC777 {
         emit NewOptions(_msgSender(), _mintable, _burnable, _pausable);
     }
 
+    function getOptions() public view returns (bool, bool, bool) {
+        return (_mintable, _burnable, _pausable);
+    }
+
     function getOwner() internal view returns (address) {
         return _owner;
     }
@@ -104,10 +107,9 @@ contract FungibleToken is ERC777 {
 
     function mint(
         uint256 amount,
-        bytes memory data,
-        bytes memory operatorData
+        bytes memory data
     ) public onlyOwner requireMintable requireActive {
-        _mint(_msgSender(), amount, data, operatorData);
+        _mint(_msgSender(), amount, data, "");
     }
 
     function mintTo(
