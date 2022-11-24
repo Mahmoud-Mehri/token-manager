@@ -38,6 +38,7 @@
     "express-graphql": "^0.12.0",
     "express-rate-limit": "^6.5.2",
     "express-session": "^1.17.3",
+    "ganache": "^7.5.0",
     "graphql": "^16.6.0",
     "hardhat": "^2.9.9",
     "helmet": "^6.0.0",
