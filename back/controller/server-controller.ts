@@ -66,7 +66,8 @@ export class ServerController {
   async deleteServer(_userId: number, _serverId: number) {
     try {
       const rows = await Server.destroy({ where: { id: _serverId } });
-      if (rows == 0) errorResponse(ErrorCode.NotFound, "Server Not Found!");
+      if (rows == 0)
+        return errorResponse(ErrorCode.NotFound, "Server Not Found!");
 
       return successResponse({}, "Server Deleted Successfully");
     } catch (err) {

@@ -85,15 +85,6 @@ export class UserController {
     }
   }
 
-  async getUserAccounts(_userId: number, _lookupUserId: number) {
-    // TO DO
-    try {
-      throw { message: "Under Development !" };
-    } catch (err) {
-      return errorResponse(ErrorCode.Exception, err.message);
-    }
-  }
-
   async getUserTokens(_userId: number, _lookupUserId: number) {
     // TO DO
     try {
@@ -129,19 +120,10 @@ export class UserController {
   async deleteUser(_userId: number, _lookupUserId: number) {
     try {
       const rows = await User.destroy({ where: { id: _lookupUserId } });
-      if (rows > 0) return successResponse({}, "User deleted successfully");
-      throw new Error("User Not found");
-    } catch (err) {
-      return errorResponse(ErrorCode.Exception, err.message);
-    }
-  }
+      if (rows === 0)
+        return errorResponse(ErrorCode.NotFound, "User Not Found!");
 
-  async addNewAccount(
-    _userId: number,
-    accountAddr: string,
-    accountPrivateKey: string = ""
-  ) {
-    try {
+      return successResponse({}, "User deleted successfully");
     } catch (err) {
       return errorResponse(ErrorCode.Exception, err.message);
     }
