@@ -6,6 +6,8 @@ import {
   DataTypes,
 } from "sequelize";
 import { sqlConnection } from "../db-connection";
+import { Deploy } from "./deploy";
+import { ServerType } from "./general";
 
 class Server extends Model<
   InferAttributes<Server>,
@@ -14,7 +16,7 @@ class Server extends Model<
   declare id: CreationOptional<number>;
   declare title: string;
   declare providerUrl: string;
-  declare isTest: boolean;
+  declare serverType: number;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 }
@@ -34,9 +36,22 @@ Server.init(
       type: DataTypes.STRING(500),
       allowNull: false,
     },
-    isTest: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true,
+    serverType: {
+      type: DataTypes.SMALLINT,
+      defaultValue: ServerType.LOCAL,
+      get() {
+        const value = this.getDataValue("serverType");
+        switch (value) {
+          case ServerType.MAINNET:
+            return "MAINNET";
+          case ServerType.TESTNET:
+            return "TESTNET";
+          case ServerType.LOCAL:
+            return "LOCAL";
+          default:
+            return "UNKNOWN";
+        }
+      },
     },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
@@ -46,5 +61,15 @@ Server.init(
     modelName: "server",
   }
 );
+
+Server.hasMany(Deploy, {
+  foreignKey: "serverId",
+  sourceKey: "id",
+});
+
+Deploy.belongsTo(Server, {
+  foreignKey: "serverId",
+  targetKey: "id",
+});
 
 export { Server };

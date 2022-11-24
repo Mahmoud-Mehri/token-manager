@@ -8,12 +8,14 @@ import {
 } from "sequelize";
 import { User } from "./user";
 import { sqlConnection } from "../db-connection";
+import { Deploy } from "./deploy";
 
 class Account extends Model<
   InferAttributes<Account>,
   InferCreationAttributes<Account>
 > {
   declare id: CreationOptional<number>;
+  declare title: string;
   declare privateKey: string | null;
   declare address: string;
   declare userId: ForeignKey<User["id"]>;
@@ -27,6 +29,9 @@ Account.init(
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
+    },
+    title: {
+      type: DataTypes.STRING(100),
     },
     privateKey: {
       type: DataTypes.STRING(66),
@@ -44,6 +49,14 @@ Account.init(
   }
 );
 
-// Account.belongsTo(User, { targetKey: "id" });
+Account.hasMany(Deploy, {
+  foreignKey: "accountId",
+  sourceKey: "id",
+});
+
+Deploy.belongsTo(Account, {
+  foreignKey: "accountId",
+  targetKey: "id",
+});
 
 export { Account };

@@ -10,13 +10,14 @@ import { User } from "./user";
 import { Deploy } from "./deploy";
 import { sqlConnection } from "../db-connection";
 import { Account } from "./account";
+import { TokenType } from "./general";
 
 class Token extends Model<
   InferAttributes<Token>,
   InferCreationAttributes<Token>
 > {
   declare id: CreationOptional<number>;
-  declare tokenType: string;
+  declare type: number;
   declare title: string;
   declare name: string;
   declare symbol: string;
@@ -33,9 +34,9 @@ Token.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    tokenType: {
-      type: DataTypes.ENUM("FT", "NFT"),
-      defaultValue: "FT",
+    type: {
+      type: DataTypes.SMALLINT,
+      defaultValue: TokenType.FT,
       allowNull: false,
     },
     title: {
@@ -67,7 +68,11 @@ Token.init(
 Token.hasMany(Deploy, {
   sourceKey: "id",
   foreignKey: "tokenId",
-  as: "deploys",
+});
+
+Deploy.belongsTo(Token, {
+  foreignKey: "tokenId",
+  targetKey: "id",
 });
 
 export { Token };
