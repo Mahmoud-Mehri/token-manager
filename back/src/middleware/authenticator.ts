@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import { ErrorCode } from "../model/general";
-import * as config from "../config.json";
 
 export const authenticator = (
   req: Request,
