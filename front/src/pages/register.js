@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { connect } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -29,9 +29,6 @@ const Register = ({
   onRegisterClick,
   ...props
 }) => {
-  const fromDlg = !!props.dialog;
-
-  // const router = useRouter();
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -50,10 +47,13 @@ const Register = ({
     }),
     onSubmit: () => {
       const data = {
-        firstName: formik.values.firstName,
-        lastName: formik.values.lastName,
-        email: formik.values.email,
-        password: formik.values.password,
+        registerInfo: {
+          firstName: formik.values.firstName,
+          lastName: formik.values.lastName,
+          email: formik.values.email,
+          password: formik.values.password,
+        },
+        setAuthInfo: authData.setAuthInfo,
       };
 
       onRegisterClick(data);
@@ -148,27 +148,6 @@ const Register = ({
               variant="outlined"
               size="small"
             />
-            {fromDlg ? null : (
-              <Box
-                sx={{
-                  alignItems: "center",
-                  display: "flex",
-                  ml: -1,
-                }}
-              >
-                <Checkbox
-                  checked={formik.values.policy}
-                  name="policy"
-                  onChange={formik.handleChange}
-                />
-                <Typography color="textSecondary" variant="body2">
-                  I have read the{" "}
-                  <Link color="primary" underline="always" variant="subtitle2">
-                    Terms and Conditions
-                  </Link>
-                </Typography>
-              </Box>
-            )}
             {Boolean(formik.touched.policy && formik.errors.policy) && (
               <FormHelperText error>{formik.errors.policy}</FormHelperText>
             )}
@@ -192,14 +171,13 @@ const Register = ({
                 Register
               </Button>
             </Box>
-            {fromDlg ? null : (
-              <Typography color="textSecondary" variant="body2">
-                Have an account?{" "}
-                <Link variant="subtitle2" underline="hover">
-                  Sign In
-                </Link>
-              </Typography>
-            )}
+
+            <Typography color="textSecondary" variant="body2">
+              Have an account?{" "}
+              <Link variant="subtitle2" underline="hover">
+                Sign In
+              </Link>
+            </Typography>
           </form>
         </Container>
       </Box>

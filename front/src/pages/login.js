@@ -1,5 +1,4 @@
-import React from "react";
-import { connect } from "react-redux";
+import React, { useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
@@ -7,8 +6,6 @@ import {
   Button,
   CircularProgress,
   Container,
-  Grid,
-  Link,
   TextField,
   Typography,
 } from "@mui/material";
@@ -17,20 +14,28 @@ import {
   getLoginError,
   getLoginMessage,
   getLoggedInUser,
-} from "../logic/selectors/user-selectors";
-import { userLoginRequest } from "../logic/thunks/user-thunk";
+} from "../logic/authentication/auth-selector";
+import { userLoginRequest } from "../logic/authentication/auth-thunk";
+import { useNavigate } from "react-router-dom";
+import {
+  useAuthDispatch,
+  useAuthState,
+} from "../logic/authentication/auth-context";
 
-const Login = ({
-  inProgress,
-  user,
-  error,
-  message,
-  onLoginClicked,
-  ...props
-}) => {
-  const fromDlg = !!props.dialog;
-  console.log(`From Dialog: ${fromDlg}`);
-  // const router = useRouter();
+const Login = ({ ...props }) => {
+  const navigate = useNavigate();
+  const authInfo = useAuthState();
+  const authDispatch = useAuthDispatch();
+
+  const loginRequest = async (data, dispatch) => {
+    await userLoginRequest(data, dispatch);
+  };
+
+  useEffect(() => {
+    console.log(`Auth Info: ${JSON.stringify(authInfo)}`);
+    if (authInfo.user.authenticated) navigate("/profile");
+  }, [authInfo]);
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -43,20 +48,23 @@ const Login = ({
         .required("Email is required"),
       password: Yup.string().max(255).required("Password is required"),
     }),
-    onSubmit: () => {
+    onSubmit: async () => {
       const data = {
         email: formik.values.email,
         password: formik.values.password,
       };
 
-      onLoginClicked(data);
+      await loginRequest(data, authDispatch);
     },
   });
 
   const Progress = <CircularProgress />;
   const Message = (
-    <Typography color={error ? "red" : "colorSecondary"} variant="body2">
-      {error ? "Error:" : ""} {message}
+    <Typography
+      color={authInfo.error ? "red" : "colorSecondary"}
+      variant="body2"
+    >
+      {authInfo.error ? "Error:" : ""} {authInfo.message}
     </Typography>
   );
 
@@ -64,72 +72,14 @@ const Login = ({
     <>
       <title>Login | Token Manager</title>
       <Box
-        component="main"
         sx={{
           alignItems: "center",
           display: "flex",
           flexGrow: 1,
-          minHeight: "100%",
         }}
       >
         <Container maxWidth="sm">
           <form onSubmit={formik.handleSubmit}>
-            {fromDlg ? null : (
-              <>
-                <Box sx={{ my: 3 }}>
-                  <Typography color="textPrimary" variant="h4">
-                    Sign in
-                  </Typography>
-                  <Typography
-                    color="textSecondary"
-                    gutterBottom
-                    variant="body2"
-                  >
-                    Sign in on the internal platform
-                  </Typography>
-                </Box>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} md={6}>
-                    <Button
-                      color="info"
-                      fullWidth
-                      startIcon={<FacebookIcon />}
-                      onClick={formik.handleSubmit}
-                      size="large"
-                      variant="contained"
-                    >
-                      Login with Facebook
-                    </Button>
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <Button
-                      fullWidth
-                      color="error"
-                      startIcon={<GoogleIcon />}
-                      onClick={formik.handleSubmit}
-                      size="large"
-                      variant="contained"
-                    >
-                      Login with Google
-                    </Button>
-                  </Grid>
-                </Grid>
-                <Box
-                  sx={{
-                    pb: 1,
-                    pt: 3,
-                  }}
-                >
-                  <Typography
-                    align="center"
-                    color="textSecondary"
-                    variant="body1"
-                  >
-                    or login with email address
-                  </Typography>
-                </Box>
-              </>
-            )}
             <TextField
               error={Boolean(formik.touched.email && formik.errors.email)}
               fullWidth
@@ -166,33 +116,18 @@ const Login = ({
                 alignItems: "center",
               }}
             >
-              <Box>{inProgress ? Progress : Message}</Box>
+              <Box>{authInfo.inProgress ? Progress : Message}</Box>
 
               <Button
                 color="primary"
-                disabled={inProgress}
+                disabled={authInfo.inProgress}
                 size="large"
                 type="submit"
                 variant="contained"
               >
-                Register
+                Login
               </Button>
             </Box>
-            {fromDlg ? null : (
-              <Typography color="textSecondary" variant="body2">
-                Don&apos;t have an account?{" "}
-                <Link
-                  to="/register"
-                  variant="subtitle2"
-                  underline="hover"
-                  sx={{
-                    cursor: "pointer",
-                  }}
-                >
-                  Sign Up
-                </Link>
-              </Typography>
-            )}
           </form>
         </Container>
       </Box>
@@ -200,15 +135,4 @@ const Login = ({
   );
 };
 
-const mapStateToProps = (state) => ({
-  inProgress: getLoginProgress(state),
-  user: getLoggedInUser(state),
-  error: getLoginError(state),
-  message: getLoginMessage(state),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  onLoginClicked: (data) => dispatch(userLoginRequest(data)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default Login;

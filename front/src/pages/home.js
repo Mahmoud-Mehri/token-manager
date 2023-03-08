@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  Button,
-  Container,
-  Box,
-  Typography,
-  DialogActions,
-  IconButton,
-  Grid,
-} from "@mui/material";
+import { Button, Container, Typography, IconButton, Grid } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -16,7 +8,7 @@ import Register from "./register";
 import Login from "./login";
 import Close from "@mui/icons-material/Close";
 
-export const Home = () => {
+export const Home = ({ setAuthInfo, ...props }) => {
   const [openLogin, setOpenLogin] = useState(false);
   const [openRegister, setOpenRegister] = useState(false);
 
@@ -114,7 +106,7 @@ export const Home = () => {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <Login dialog />
+          <Login dialog setAuthInfo={setAuthInfo} />
         </DialogContent>
       </Dialog>
       {/* Register Dialog */}
