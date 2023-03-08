@@ -1,7 +1,7 @@
 import cluster from "cluster";
 import os from "os";
 import { app } from "./app";
-import * as config from "./config.json";
+import config from "./config";
 
 if (config.cluster_mode) {
   const cpuCount = os.cpus().length;

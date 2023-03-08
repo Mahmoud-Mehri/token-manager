@@ -6,8 +6,9 @@ import * as redis from "redis";
 import cors from "cors";
 import helmet from "helmet";
 import RateLimit from "express-rate-limit";
-import * as config from "./config.json";
+import config from "./config";
 import { syncTables } from "./model/sync-tables";
+import { redisClient } from "./db-connection";
 
 // Routes
 import { authRouter } from "./routes/auth-routes";
@@ -21,15 +22,12 @@ import { deployRouter } from "./routes/deploy-routes";
 import { authenticator } from "./middleware/authenticator";
 import { handle404 } from "./middleware/error-handler";
 
-// syncTables();
+console.log("Before Syncing Tables");
 
-const redisClient = redis.createClient({
-  legacyMode: true,
-  socket: {
-    host: config.redis.host,
-    port: config.redis.port,
-  },
-});
+syncTables();
+
+console.log("After Syncing Tables");
+
 const redisStore = connectRedis(session);
 
 (async function () {
@@ -58,7 +56,12 @@ app.use(
     saveUninitialized: false,
   })
 );
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: "http://localhost:3001",
+  })
+);
 app.use(helmet());
 
 const rateLimit = RateLimit({
