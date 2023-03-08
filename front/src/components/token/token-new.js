@@ -30,6 +30,7 @@ const NewToken = ({
     initialValues: {
       type: 1,
       title: "",
+      name: "",
       symbol: "",
       icon: "",
       media: "",
@@ -37,23 +38,25 @@ const NewToken = ({
     },
     validationSchema: Yup.object({
       type: Yup.number().min(1).max(2).required("Token Type is required"),
-      title: Yup.string().required("Title is required"),
+      title: Yup.string().max(100).required("Title is required"),
+      name: Yup.string().max(20).required("Name is required"),
       symbol: Yup.string().max(4).required("Symbol in required"),
       icon: Yup.string().url("Icon file url is not valid").notRequired(),
       media: Yup.string().url("Media Url is not valid"),
       description: Yup.string().notRequired(),
     }),
-    onSubmit: () => {
+    onSubmit: async () => {
       const data = {
         type: formik.values.type,
         title: formik.values.title,
+        name: formik.values.name,
         symbol: formik.values.symbol,
         icon: formik.values.icon,
         media: formik.values.media,
         description: formik.values.description,
       };
 
-      createNewToken(data);
+      await createNewToken(data);
     },
   });
 
@@ -88,6 +91,19 @@ const NewToken = ({
           onBlur={formik.handleBlur}
           onChange={formik.handleChange}
           error={Boolean(formik.touched.title && formik.errors.title)}
+          fullWidth
+          size="small"
+          variant="outlined"
+          margin="dense"
+        ></TextField>
+        <TextField
+          type="text"
+          name="name"
+          label="Token Name"
+          value={formik.values.name}
+          onBlur={formik.handleBlur}
+          onChange={formik.handleChange}
+          error={Boolean(formik.touched.name && formik.errors.name)}
           fullWidth
           size="small"
           variant="outlined"

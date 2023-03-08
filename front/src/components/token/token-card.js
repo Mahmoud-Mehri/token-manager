@@ -1,85 +1,81 @@
 import React from "react";
+import { useState } from "react";
 import {
   Avatar,
   Box,
   Card,
+  CardActionArea,
   CardContent,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Divider,
   Grid,
+  Collapse,
+  IconButton,
   Typography,
 } from "@mui/material";
-import * as EmptyIcon from "@mui/icons-material/Assignment";
-import * as ManageIcon from "@mui/icons-material/Settings";
+import { Assignment as EmptyIcon } from "@mui/icons-material";
+import { Settings as ManageIcon } from "@mui/icons-material";
+import Close from "@mui/icons-material/Close";
 
-export const TokenCard = ({ token, ...rest }) => (
-  <Card
-    sx={{
-      display: "flex",
-      flexDirection: "column",
-      height: "100%",
-    }}
-    {...rest}
-  >
-    <CardContent>
-      <Box
+import TokenDetail from "./token-detail";
+
+const TokenCard = ({ tokenInfo, selected, setSelectedId, ...rest }) => {
+  console.log(`Token: ${JSON.stringify(tokenInfo)}`);
+
+  return (
+    <Box>
+      <Card
         sx={{
+          background: selected ? "#80CBC4" : "#E1F5FE",
           display: "flex",
-          justifyContent: "center",
-          pb: 3,
+          flexDirection: "column",
+          height: "100%",
+        }}
+        onClick={() => {
+          setSelectedId(tokenInfo.id);
         }}
       >
-        {!!token.icon ? (
-          <Avatar alt="Product" src={token.icon} variant="square" />
-        ) : (
-          <EmptyIcon color="action" />
-        )}
-      </Box>
-      <Typography align="center" color="textPrimary" gutterBottom variant="h5">
-        {token.title}
-      </Typography>
-      <Typography align="center" color="textPrimary" variant="body1">
-        {token.description}
-      </Typography>
-    </CardContent>
-    <Box sx={{ flexGrow: 1 }} />
-    <Divider />
-    <Box sx={{ p: 2 }}>
-      <Grid container spacing={2} sx={{ justifyContent: "space-between" }}>
-        <Grid
-          item
-          sx={{
-            alignItems: "center",
-            display: "flex",
-          }}
-        >
-          <EmptyIcon color="action" />
-          <Typography
-            color="textSecondary"
-            display="inline"
-            sx={{ pl: 1 }}
-            variant="body2"
-          >
-            Updated 2hr ago
-          </Typography>
-        </Grid>
-        <Grid
-          item
-          sx={{
-            alignItems: "center",
-            display: "flex",
-          }}
-        >
-          <ManageIcon />
-          <Typography
-            color="textSecondary"
-            display="inline"
-            sx={{ pl: 1 }}
-            variant="body2"
-          >
-            Manage Token
-          </Typography>
-        </Grid>
-      </Grid>
+        <CardActionArea>
+          <CardContent>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                pb: 1,
+              }}
+            >
+              {!!tokenInfo.icon ? (
+                <Avatar alt="Product" src={tokenInfo.icon} variant="square" />
+              ) : (
+                <EmptyIcon color="action" variant="square" />
+              )}
+            </Box>
+            <Typography
+              align="center"
+              color="textPrimary"
+              gutterBottom
+              // variant="h5"
+              fontSize={12}
+              fontStyle={"bold"}
+            >
+              {tokenInfo.title}
+            </Typography>
+            <Typography
+              align="center"
+              color="textPrimary"
+              // variant="body1"
+              fontSize={10}
+            >
+              {tokenInfo.description}
+            </Typography>
+          </CardContent>
+          <Box />
+        </CardActionArea>
+      </Card>
     </Box>
-  </Card>
-);
+  );
+};
+
+export default TokenCard;
