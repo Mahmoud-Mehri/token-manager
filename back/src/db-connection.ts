@@ -1,5 +1,6 @@
 import { Sequelize } from "sequelize";
-import * as config from "./config.json";
+import * as redis from "redis";
+import config from "./config";
 
 const sqlConnection = new Sequelize("token_manager", "postgres", "postgres", {
   dialect: "postgres",
@@ -8,4 +9,12 @@ const sqlConnection = new Sequelize("token_manager", "postgres", "postgres", {
   logging: config.postgres.logging,
 });
 
-export { sqlConnection };
+const redisClient = redis.createClient({
+  legacyMode: true,
+  socket: {
+    host: config.redis.host,
+    port: config.redis.port,
+  },
+});
+
+export { sqlConnection, redisClient };
