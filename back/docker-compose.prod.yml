@@ -1,0 +1,62 @@
+version: "3.4"
+
+volumes:
+  redis_volume:
+    driver: local
+  psql_volume:
+    driver: local
+
+# networks:
+#   local-dev:
+#     external: true
+
+services:
+  psql:
+    container_name: psql-container
+    hostname: psql-host
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=token_manager
+    ports:
+      - "5433:5432"
+    volumes:
+      - psql_volume:/data/psql
+    # networks:
+    #   - local-dev
+
+  redis:
+    container_name: redis-container
+    hostname: redis-host
+    image: redis:7-alpine
+    restart: always
+    command: redis-server --loglevel warning
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_volume:/data/redis
+    # networks:
+    #   - local-dev
+
+  api-p:
+    depends_on:
+      - psql
+      - redis
+    container_name: api-p
+    build:
+      context: .
+      target: production
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PSQL_HOST=psql
+      - PSQL_PORT=5432
+      - PSQL_LOGGING=false
+      - MONGO_HOST=.
+      - MONGO_PORT=37016
+    ports:
+      - 4000:3000
+    # networks:
+    #   - local-dev

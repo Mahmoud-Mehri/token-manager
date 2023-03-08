@@ -1,0 +1,28 @@
+FROM node:16-alpine as build
+
+WORKDIR /usr/token-manager/app
+
+COPY package*.json .
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build
+
+FROM node:16-alpine as production
+
+ARG ENV_ARG=production
+ENV NODE_ENV=${ENV_ARG}
+
+WORKDIR /usr/token-manager/app
+
+COPY package*.json .
+
+RUN npm install --production
+
+COPY --from=build /usr/token-manager/app/dist ./dist
+
+CMD ["node", "./dist/index.js"]
+
+
