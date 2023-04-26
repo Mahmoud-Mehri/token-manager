@@ -1,44 +1,44 @@
 import {
-  TOKEN_LIST_LOADING,
-  TOKEN_LIST_SUCCESS,
-  TOKEN_LIST_FAILURE,
-  TOKEN_CREATE_PROGRESS,
-  TOKEN_CREATE_SUCCESS,
-  TOKEN_CREATE_FAILURE,
-} from "../actions/token-actions";
+  DEPLOY_LIST_LOADING,
+  DEPLOY_LIST_SUCCESS,
+  DEPLOY_LIST_FAILURE,
+  DEPLOY_CREATE_PROGRESS,
+  DEPLOY_CREATE_SUCCESS,
+  DEPLOY_CREATE_FAILURE,
+} from "../actions/deploy-actions";
 
 const listInitialState = {
   loading: false,
-  tokens: [],
+  deploys: [],
   error: false,
   message: "",
 };
 
-export const tokenList = (state = listInitialState, action) => {
+export const deployList = (state = listInitialState, action) => {
   const { type, payload } = action;
   switch (type) {
-    case TOKEN_LIST_LOADING:
+    case DEPLOY_LIST_LOADING:
       return {
         ...state,
         loading: true,
         error: false,
-        tokens: null,
+        deploys: null,
         message: "",
       };
-    case TOKEN_LIST_SUCCESS:
+    case DEPLOY_LIST_SUCCESS:
       return {
         ...state,
         loading: false,
         error: false,
-        tokens: payload.tokens,
+        deploys: payload.deploys,
         message: payload.message,
       };
-    case TOKEN_LIST_FAILURE:
+    case DEPLOY_LIST_FAILURE:
       return {
         ...state,
         loading: false,
         error: true,
-        tokens: null,
+        deploys: null,
         message: payload.message,
       };
     default:
@@ -48,35 +48,35 @@ export const tokenList = (state = listInitialState, action) => {
 
 const initialState = {
   inProgress: false,
-  token: null,
+  deployInfo: null,
   error: false,
   message: "",
 };
 
-export const createToken = (state = initialState, action) => {
+export const createDeploy = (state = initialState, action) => {
   const { type, payload } = action;
   switch (type) {
-    case TOKEN_CREATE_PROGRESS: {
+    case DEPLOY_CREATE_PROGRESS: {
       return {
         ...state,
         inProgress: true,
-        token: null,
+        deployInfo: null,
         error: false,
         message: "",
       };
     }
-    case TOKEN_CREATE_SUCCESS: {
+    case DEPLOY_CREATE_SUCCESS: {
       return {
         ...state,
         inProgress: false,
-        token: payload.token,
+        deployInfo: payload.deploy,
       };
     }
-    case TOKEN_CREATE_FAILURE: {
+    case DEPLOY_CREATE_FAILURE: {
       return {
         ...state,
         inProgress: false,
-        token: null,
+        deployInfo: null,
         error: true,
         message: payload.message,
       };

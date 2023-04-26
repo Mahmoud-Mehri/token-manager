@@ -22,13 +22,20 @@ const TokenList = ({
   error,
   message,
   loadTokenList,
+  refreshList,
+  setRefreshList,
   setTokenInfo,
   setOpenDetail,
   ...props
 }) => {
   useEffect(() => {
-    loadTokenList();
-  }, []);
+    console.log("RL-USEEFFECT");
+    if (refreshList === true) {
+      console.log("Before Load");
+      loadTokenList();
+      setRefreshList(false);
+    }
+  }, [refreshList]);
 
   const [selectedId, setSelectedId] = useState(-1);
   const setSelected = (id) => {

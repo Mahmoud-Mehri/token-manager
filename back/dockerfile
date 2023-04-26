@@ -10,6 +10,8 @@ COPY . .
 
 RUN npm run build
 
+COPY ./src/tokens/contracts ./dist/tokens/contracts
+
 FROM node:16-alpine as production
 
 ARG ENV_ARG=production
@@ -23,6 +25,6 @@ RUN npm install --production
 
 COPY --from=build /usr/token-manager/app/dist ./dist
 
+COPY --from=build /usr/token-manager/app/dist/tokens/contracts ./dist/tokens/contracts
+
 CMD ["node", "./dist/index.js"]
-
-

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Collapse,
@@ -16,8 +16,17 @@ import TokenDetail from "../components/token/token-detail";
 
 const Tokens = ({ ...props }) => {
   const [newToken, setNewToken] = useState(false);
+  const [newTokenStarted, setNewTokenStarted] = useState(false);
+  const [newTokenSucceed, setNewTokenSucceed] = useState(false);
   const [openDetail, setOpenDetail] = useState(false);
   const [selectedTokenInfo, setSelectedTokenInfo] = useState({});
+  const [refreshList, setRefreshList] = useState(true);
+
+  useEffect(() => {
+    if (newTokenSucceed === true) {
+      setRefreshList(true);
+    }
+  }, [newTokenSucceed]);
 
   return (
     <>
@@ -25,10 +34,15 @@ const Tokens = ({ ...props }) => {
       <Box
         sx={{
           flexGrow: 1,
-          py: 1,
+          p: 1,
         }}
       >
-        <TokensHeader newToken={newToken} setNewToken={setNewToken} />
+        <TokensHeader
+          newToken={newToken}
+          setNewToken={setNewToken}
+          setNewTokenStarted={setNewTokenStarted}
+          setNewTokenSucceed={setNewTokenSucceed}
+        />
         <Dialog open={newToken}>
           <DialogTitle>
             <Box display="flex" justifyContent="space-between" marginBottom={1}>
@@ -47,10 +61,18 @@ const Tokens = ({ ...props }) => {
             </Box>
           </DialogTitle>
           <DialogContent>
-            <NewToken />
+            <NewToken
+              newToken={newToken}
+              setNewToken={setNewToken}
+              newTokenStarted={newTokenStarted}
+              setNewTokenStarted={setNewTokenStarted}
+              setNewTokenSucceed={setNewTokenSucceed}
+            />
           </DialogContent>
         </Dialog>
         <TokenList
+          refreshList={refreshList}
+          setRefreshList={setRefreshList}
           setOpenDetail={setOpenDetail}
           setTokenInfo={setSelectedTokenInfo}
         />

@@ -1,5 +1,8 @@
-export const ROUTE_USER_REGISTER = "http://localhost:3000/register";
-export const ROUTE_USER_LOGIN = "http://localhost:3000/login";
+export const ROUTE_REGISTER = "/register";
+export const ROUTE_LOGIN = "/login";
 
-export const ROUTE_TOKEN_LIST = "";
-export const Route_TOKEN_CREATE = "";
+export const ROUTE_USERS = "/users";
+export const ROUTE_ACCOUNTS = "/accounts";
+export const ROUTE_SERVER = "/server";
+export const ROUTE_TOKENS = "/tokens";
+export const ROUTE_DEPLOY = "/deploy";

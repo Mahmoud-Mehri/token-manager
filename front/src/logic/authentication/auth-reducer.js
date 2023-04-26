@@ -1,40 +1,33 @@
 import {
-  USER_REGISTER_PROGRESS,
-  USER_REGISTER_SUCCESS,
-  USER_REGISTER_FAILURE,
   USER_LOGIN_PROGRESS,
   USER_LOGIN_SUCCESS,
   USER_LOGIN_FAILURE,
-} from "../actions/user-actions.js";
+} from "./auth-actions";
 
-const initialState = {
-  inProgress: false,
-  user: null,
-  error: false,
-  message: "",
-};
-
-export const userRegister = (state = initialState, action) => {
+export const userLogin = (state, action) => {
   const { type, payload } = action;
   switch (type) {
-    case USER_REGISTER_PROGRESS:
+    case USER_LOGIN_PROGRESS:
       return {
         ...state,
         inProgress: true,
         error: false,
+        message: "Authenticating ...",
       };
-    case USER_REGISTER_SUCCESS:
+    case USER_LOGIN_SUCCESS:
+      console.log(`SUCCESS: ${JSON.stringify(payload)}`);
       return {
         ...state,
         inProgress: false,
         error: false,
-        user: payload.user,
+        user: {
+          ...payload.user,
+        },
       };
-    case USER_REGISTER_FAILURE:
+    case USER_LOGIN_FAILURE:
       return {
         ...state,
         inProgress: false,
-        user: null,
         error: true,
         message: payload.message,
       };

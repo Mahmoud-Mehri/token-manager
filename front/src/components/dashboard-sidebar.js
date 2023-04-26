@@ -11,12 +11,13 @@ import {
 import { Person, List, Settings } from "@mui/icons-material";
 
 import { NavItem } from "./nav-item";
+import { useAuthState } from "../logic/authentication/auth-context";
 
 const items = [
   {
     href: "/profile",
     icon: <Person fontSize="small" />,
-    title: "Profile",
+    title: "Dashboard",
   },
   {
     href: "/tokens",
@@ -38,6 +39,8 @@ export const DashboardSidebar = (props) => {
     defaultMatches: true,
     noSsr: false,
   });
+
+  const authInfo = useAuthState();
 
   const content = (
     <>
@@ -63,11 +66,11 @@ export const DashboardSidebar = (props) => {
               }}
             >
               <div>
-                <Typography color="inherit" variant="subtitle1">
-                  Account Name
+                <Typography color="inherit" variant="subtitle2">
+                  {authInfo.user.email}
                 </Typography>
                 <Typography color="neutral.400" variant="body2">
-                  Your tier : Premium
+                  ...
                 </Typography>
               </div>
             </Box>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -24,6 +24,11 @@ const NewToken = ({
   error,
   message,
   createNewToken,
+  newToken,
+  setNewToken,
+  newTokenStarted,
+  setNewTokenStarted,
+  setNewTokenSucceed,
   ...props
 }) => {
   const formik = useFormik({
@@ -45,7 +50,7 @@ const NewToken = ({
       media: Yup.string().url("Media Url is not valid"),
       description: Yup.string().notRequired(),
     }),
-    onSubmit: async () => {
+    onSubmit: () => {
       const data = {
         type: formik.values.type,
         title: formik.values.title,
@@ -56,16 +61,26 @@ const NewToken = ({
         description: formik.values.description,
       };
 
-      await createNewToken(data);
+      setNewTokenStarted(true);
+      createNewToken(data);
     },
   });
 
-  const Progress = inProgress ? <CircularProgress /> : null;
+  const Progress = <CircularProgress />;
   const Message = (
     <Typography color={error ? "red" : "colorSecondary"}>
       {error ? "Error: " : ""} {message}
     </Typography>
   );
+
+  useEffect(() => {
+    if (inProgress === false && token != null && newTokenStarted === true) {
+      setNewTokenStarted(false);
+      setNewTokenSucceed(true);
+      setNewToken(false);
+      console.log("NEW TOKEN SUCCEED");
+    }
+  }, [inProgress]);
 
   return (
     <>

@@ -10,7 +10,7 @@ export const TOKEN_LIST_SUCCESS = "TOKEN_LIST_SUCCESS";
 export const tokenListSuccess = (tokens) => {
   return {
     type: TOKEN_LIST_SUCCESS,
-    payload: { tokens, message: "Token List successfully loaded" },
+    payload: { tokens, message: "Token List loaded successfully" },
   };
 };
 
@@ -34,7 +34,7 @@ export const TOKEN_CREATE_SUCCESS = "TOKEN_CREATE_SUCCESS";
 export const createTokenSuccess = (token) => {
   return {
     type: TOKEN_CREATE_SUCCESS,
-    payload: { token },
+    payload: { token, message: "Token created successfully" },
   };
 };
 

@@ -35,6 +35,7 @@ export interface DeployConfig {
 
 export enum ErrorCode {
   None = 200,
+  NotModified = 304,
   BadRequest = 400,
   Exception = 500,
   NotFound = 404,

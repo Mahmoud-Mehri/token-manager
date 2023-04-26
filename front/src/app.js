@@ -1,27 +1,61 @@
-import React, { useContext } from "react";
-import { Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "@mui/material";
+import React, { useState } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Tokens from "./pages/tokens.js";
 import Register from "./pages/register.js";
 import { Home } from "./pages/home.js";
-import Account from "./pages/account.js";
+import Dashboard from "./pages/dashboard.js";
 import Settings from "./pages/settings.js";
 import { DashboardLayout } from "./components/dashboard-layout.js";
-import { theme } from "./theme/index.js";
+import Login from "./pages/login.js";
+import { useAuthState } from "./logic/authentication/auth-context.js";
 
-function App({ login }) {
+function App() {
+  const authInfo = useAuthState();
+
   return (
-    <ThemeProvider theme={theme}>
-      <div className="app">
-        <DashboardLayout>
-          <Routes>
-            <Route path="/profile" element={<Account />} />
-            <Route path="/tokens" element={<Tokens />} />
-            <Route path="/settings" element={<Settings />} />
-          </Routes>
-        </DashboardLayout>
-      </div>
-    </ThemeProvider>
+    <div className="app">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/profile"
+          element={
+            authInfo.user.authenticated ? (
+              <DashboardLayout>
+                <Dashboard />
+              </DashboardLayout>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/tokens"
+          element={
+            authInfo.user.authenticated ? (
+              <DashboardLayout>
+                <Tokens />
+              </DashboardLayout>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            authInfo.user.authenticated ? (
+              <DashboardLayout>
+                <Settings />
+              </DashboardLayout>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+      </Routes>
+    </div>
   );
 }
 

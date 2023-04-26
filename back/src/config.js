@@ -20,17 +20,20 @@ const config = {
     sessionSecret: "SESSION_SECRET_KEY",
   },
   redis: {
-    host: process.env.REDIS_HOST || "0.0.0.0",
-    port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379,
+    host: process.env.REDIS_HOST || "localhost",
+    port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6380,
   },
   mongodb: {
-    host: process.env.MONGO_HOST || "0.0.0.0",
+    host: process.env.MONGO_HOST || "localhost",
     port: process.env.MONGO_PORT ? parseInt(process.env.MONGO_PORT) : 37016,
   },
   postgres: {
-    host: process.env.PSQL_HOST || "0.0.0.0",
-    port: process.env.PSQL_PORT ? parseInt(process.env.PSQL_PORT) : 5432,
+    host: process.env.PSQL_HOST || "localhost",
+    port: process.env.PSQL_PORT ? parseInt(process.env.PSQL_PORT) : 5433,
     logging: process.env.PSQL_LOGGING === "true",
+  },
+  general: {
+    cacheMaxAge: 3600,
   },
 };
 

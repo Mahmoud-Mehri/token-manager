@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { Box, Button, Typography, Divider } from "@mui/material";
 
-export const TokensHeader = ({ newToken, setNewToken, ...props }) => {
+export const TokensHeader = ({
+  newToken,
+  setNewToken,
+  setNewTokenStarted,
+  setNewTokenSucceed,
+  ...props
+}) => {
   return (
     <Box>
       <Box
@@ -22,6 +28,8 @@ export const TokensHeader = ({ newToken, setNewToken, ...props }) => {
             variant="contained"
             disabled={newToken}
             onClick={() => {
+              setNewTokenStarted(false);
+              setNewTokenSucceed(false);
               setNewToken(true);
             }}
           >

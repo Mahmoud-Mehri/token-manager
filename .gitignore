@@ -1,7 +1,9 @@
 # Back
 back/node_modules
-back/tokens/artifacts
-back/tokens/cache
+back/src/tokens/artifacts
+back/src/tokens/cache
+back/dist
+# back/tokens/contracts/ft-data.json
 
 # Front
 front/node_modules

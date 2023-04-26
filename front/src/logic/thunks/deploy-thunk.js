@@ -1,20 +1,20 @@
 import {
-  tokenListLoading,
-  tokenListSuccess,
-  tokenListFailure,
-  createTokenProgress,
-  createTokenSuccess,
-  createTokenFailure,
-} from "../actions/token-actions";
+  deployListLoading,
+  deployListSuccess,
+  deployListFailure,
+  createDeployProgress,
+  createDeploySuccess,
+  createDeployFailure,
+} from "../actions/deploy-actions";
 import { axiosClient } from "../axios-client";
-import { ROUTE_TOKENS } from "../constants";
+import { ROUTE_DEPLOY } from "../constants";
 
-export const tokenListRequest = () => async (dispatch) => {
+export const deployListRequest = () => async (dispatch) => {
   try {
-    dispatch(tokenListLoading());
-    const { data: result, ...response } = await axiosClient.get(ROUTE_TOKENS);
+    dispatch(deployListLoading());
+    const { data: result, ...response } = await axiosClient.get(ROUTE_DEPLOY);
     if (result && result.success) {
-      dispatch(tokenListSuccess(result.data));
+      dispatch(deployListSuccess(result.data));
     } else {
       if (result) {
         throw { message: result.message };
@@ -29,19 +29,19 @@ export const tokenListRequest = () => async (dispatch) => {
     } else {
       message = err.message;
     }
-    dispatch(tokenListFailure(message));
+    dispatch(deployListFailure(message));
   }
 };
 
-export const createTokenRequest = (data) => async (dispatch) => {
+export const createDeployRequest = (data) => async (dispatch) => {
   try {
-    dispatch(createTokenProgress());
+    dispatch(createDeployProgress());
     const { data: result, ...response } = await axiosClient.post(
-      ROUTE_TOKENS,
+      ROUTE_DEPLOY,
       data
     );
     if (result && result.success) {
-      dispatch(createTokenSuccess(result.data));
+      dispatch(createDeploySuccess(result.data));
     } else {
       if (result) {
         throw { message: result.message };
@@ -56,6 +56,6 @@ export const createTokenRequest = (data) => async (dispatch) => {
     } else {
       message = err.message;
     }
-    dispatch(createTokenFailure(message));
+    dispatch(createDeployFailure(message));
   }
 };
