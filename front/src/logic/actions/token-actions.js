@@ -45,3 +45,51 @@ export const createTokenFailure = (message) => {
     payload: { message },
   };
 };
+
+export const TOKEN_UPDATE_PROGRESS = "TOKEN_UPDATE_PROGRESS";
+export const updateTokenProgress = () => {
+  return {
+    type: TOKEN_UPDATE_PROGRESS,
+    payload: null,
+  };
+};
+
+export const TOKEN_UPDATE_SUCCESS = "TOKEN_UPDATE_SUCCESS";
+export const updateTokenSuccess = (token) => {
+  return {
+    type: TOKEN_UPDATE_SUCCESS,
+    payload: { token, message: "Token updated successfully" },
+  };
+};
+
+export const TOKEN_UPDATE_FAILURE = "TOKEN_UPDATE_FAILURE";
+export const updateTokenFailure = (message) => {
+  return {
+    type: TOKEN_UPDATE_FAILURE,
+    payload: { message },
+  };
+};
+
+export const TOKEN_DELETE_PROGRESS = "TOKEN_DELETE_PROGRESS";
+export const deleteTokenProgress = () => {
+  return {
+    type: TOKEN_DELETE_PROGRESS,
+    payload: null,
+  };
+};
+
+export const TOKEN_DELETE_SUCCESS = "TOKEN_DELETE_SUCCESS";
+export const deleteTokenSuccess = (token) => {
+  return {
+    type: TOKEN_DELETE_SUCCESS,
+    payload: { token, message: "Token deleted successfully" },
+  };
+};
+
+export const TOKEN_DELETE_FAILURE = "TOKEN_DELETE_FAILURE";
+export const deleteTokenFailure = (message) => {
+  return {
+    type: TOKEN_DELETE_FAILURE,
+    payload: { message },
+  };
+};
