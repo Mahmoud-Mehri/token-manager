@@ -1,5 +1,9 @@
 import mongoose from "mongoose";
-import { LogRecordType } from "./general";
+
+export enum LogRecordType {
+  Exception = "EXCEPTION",
+  NotFound = "NOTFOUND",
+}
 
 export interface ILogRecord {
   logType: LogRecordType;
