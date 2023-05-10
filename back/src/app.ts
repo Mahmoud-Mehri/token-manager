@@ -72,8 +72,8 @@ app.use(rateLimit);
 
 app.use("/", authRouter);
 
-app.use("/server", authenticator);
-app.use("/server", serverRouter);
+app.use("/servers", authenticator);
+app.use("/servers", serverRouter);
 
 app.use("/users", authenticator);
 app.use("/users", userRouter);
@@ -84,8 +84,8 @@ app.use("/tokens", tokenRouter);
 app.use("/accounts", authenticator);
 app.use("/accounts", accountRouter);
 
-app.use("/deploy", authenticator);
-app.use("/deploy", deployRouter);
+app.use("/deploys", authenticator);
+app.use("/deploys", deployRouter);
 
 app.use(handle404);
 
