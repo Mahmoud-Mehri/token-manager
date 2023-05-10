@@ -9,9 +9,9 @@ deployRouter.get("/:id", async (req, res) => {
   const userId = req.session.user.id;
   const deployId = parseInt(req.params.id);
 
-  //   deployController.allAccounts(userId).then((result) => {
-  //     res.status(result.errorCode).json(removeErrorCode(result));
-  //   });
+  // deployController.getDeploy(userId).then((result) => {
+  //   res.status(result.errorCode).json(removeErrorCode(result));
+  // });
 });
 
 deployRouter.post("/", async (req, res) => {
