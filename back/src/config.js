@@ -29,8 +29,9 @@ const config = {
   },
   postgres: {
     host: process.env.PSQL_HOST || "localhost",
-    port: process.env.PSQL_PORT ? parseInt(process.env.PSQL_PORT) : 5433,
+    port: process.env.PSQL_PORT ? parseInt(process.env.PSQL_PORT) : 5434,
     logging: process.env.PSQL_LOGGING === "true",
+    forceCreate: process.env.PSQL_FORCECREATE === "true",
   },
   general: {
     cacheMaxAge: 3600,

@@ -4,10 +4,12 @@ import { Server } from "./server";
 import { Token } from "./token";
 import { User } from "./user";
 
+import config from "../config";
+
 export async function syncTables() {
-  await User.sync({ force: true });
-  await Account.sync({ force: true });
-  await Server.sync({ force: true });
-  await Token.sync({ force: true });
-  await Deploy.sync({ force: true });
+  await User.sync({ force: config.postgres.forceCreate });
+  await Account.sync({ force: config.postgres.forceCreate });
+  await Server.sync({ force: config.postgres.forceCreate });
+  await Token.sync({ force: config.postgres.forceCreate });
+  await Deploy.sync({ force: config.postgres.forceCreate });
 }
